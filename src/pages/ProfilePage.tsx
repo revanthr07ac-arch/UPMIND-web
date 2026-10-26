@@ -20,7 +20,7 @@ import { EditProfileModal } from '../components/profile/EditProfileModal';
 import { LearningRequestModal } from '../components/learning/LearningRequestModal';
 import { PostCommentsModal } from '../components/feed/PostCommentsModal';
 import { ShareModal } from '../components/feed/ShareModal';
-import { formatNumber } from '../lib/utils';
+import { formatNumber, isReelPost } from '../lib/utils';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 import type { Profile, Post, UserSkill } from '../types/database';
@@ -530,14 +530,14 @@ export const ProfilePage: React.FC = () => {
         )}
 
         {activeTab === 'reels' && (
-          posts.filter((p) => p.is_reel || p.post_type === 'reel' || p.video_url).length === 0 ? (
+          posts.filter((p) => isReelPost(p)).length === 0 ? (
             <div className="py-12 text-center text-xs text-[#858995]">
               No reels published yet.
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {posts
-                .filter((p) => p.is_reel || p.post_type === 'reel' || p.video_url)
+                .filter((p) => isReelPost(p))
                 .map((post) => (
                   <div
                     key={post.id}
@@ -545,7 +545,7 @@ export const ProfilePage: React.FC = () => {
                     className="aspect-[9/16] bg-black rounded-[14px] overflow-hidden border border-[#292B34] relative cursor-pointer"
                   >
                     <video
-                      src={post.video_url || ''}
+                      src={post.video_url || post.image_url || ''}
                       className="w-full h-full object-cover"
                     />
                   </div>

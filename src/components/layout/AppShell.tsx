@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { DesktopSidebar } from './DesktopSidebar';
 import { MobileHeader } from './MobileHeader';
@@ -12,7 +12,23 @@ interface AppShellProps {
 
 export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [initialPostType, setInitialPostType] = useState<'image' | 'tutorial' | 'reel' | 'text'>('image');
   const location = useLocation();
+
+  useEffect(() => {
+    const handleOpenCreate = (e: Event) => {
+      const customEvent = e as CustomEvent<{ defaultType?: 'image' | 'tutorial' | 'reel' | 'text' }>;
+      if (customEvent.detail?.defaultType) {
+        setInitialPostType(customEvent.detail.defaultType);
+      } else {
+        setInitialPostType('image');
+      }
+      setIsCreateOpen(true);
+    };
+
+    window.addEventListener('upmind:openCreatePost', handleOpenCreate);
+    return () => window.removeEventListener('upmind:openCreatePost', handleOpenCreate);
+  }, []);
 
   // Pages where right sidebar should be hidden for maximum focus
   const isFullWidthPage =
@@ -27,7 +43,12 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
 
       <div className="flex-1 w-full max-w-[1440px] mx-auto flex">
         {/* Left Desktop Sidebar */}
-        <DesktopSidebar onOpenCreateModal={() => setIsCreateOpen(true)} />
+        <DesktopSidebar
+          onOpenCreateModal={() => {
+            setInitialPostType('image');
+            setIsCreateOpen(true);
+          }}
+        />
 
         {/* Central Content Column */}
         <main
@@ -43,11 +64,17 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
       </div>
 
       {/* Bottom Bar for Mobile & Tablet */}
-      <MobileBottomNav onOpenCreateModal={() => setIsCreateOpen(true)} />
+      <MobileBottomNav
+        onOpenCreateModal={() => {
+          setInitialPostType('image');
+          setIsCreateOpen(true);
+        }}
+      />
 
       {/* Global Post Composer */}
       <PostComposer
         isOpen={isCreateOpen}
+        defaultPostType={initialPostType}
         onClose={() => setIsCreateOpen(false)}
         onPostCreated={() => {
           // Trigger custom event so active feed can refresh

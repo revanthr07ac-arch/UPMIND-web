@@ -11,14 +11,36 @@ export const RightSidebar: React.FC = () => {
   const navigate = useNavigate();
   const [suggestedCreators, setSuggestedCreators] = useState<Profile[]>([]);
   const [followingMap, setFollowingMap] = useState<Record<string, boolean>>({});
+  const [skillCategories, setSkillCategories] = useState<string[]>([]);
+  const [loadingCreators, setLoadingCreators] = useState(true);
 
   useEffect(() => {
     async function loadSuggestions() {
+      setLoadingCreators(true);
       try {
+        // Fetch blocked users if authenticated
+        const blockedUserIds = new Set<string>();
+        if (user) {
+          try {
+            const { data: blocks } = await supabase
+              .from('blocks')
+              .select('blocked_id, blocker_id')
+              .or(`blocker_id.eq.${user.id},blocked_id.eq.${user.id}`);
+            if (blocks) {
+              blocks.forEach((b: { blocker_id: string; blocked_id: string }) => {
+                if (b.blocker_id === user.id) blockedUserIds.add(b.blocked_id);
+                if (b.blocked_id === user.id) blockedUserIds.add(b.blocker_id);
+              });
+            }
+          } catch (_) {
+            // Ignore block fetch error if table not configured
+          }
+        }
+
         let query = supabase
           .from('profiles')
           .select('*')
-          .limit(5);
+          .limit(8);
 
         if (user) {
           query = query.neq('id', user.id);
@@ -26,11 +48,16 @@ export const RightSidebar: React.FC = () => {
 
         const { data } = await query;
         if (data) {
-          setSuggestedCreators(data as Profile[]);
+          // Filter out blocked users
+          const filtered = (data as Profile[])
+            .filter((p) => !blockedUserIds.has(p.id))
+            .slice(0, 5);
+
+          setSuggestedCreators(filtered);
 
           // Check if current user follows them
-          if (user && data.length > 0) {
-            const ids = data.map((d) => d.id);
+          if (user && filtered.length > 0) {
+            const ids = filtered.map((d) => d.id);
             const { data: followRecords } = await supabase
               .from('follows')
               .select('following_id')
@@ -46,11 +73,34 @@ export const RightSidebar: React.FC = () => {
             }
           }
         }
-      } catch (_) {}
+      } catch (_) {
+        // Handle error gracefully
+      } finally {
+        setLoadingCreators(false);
+      }
     }
 
     loadSuggestions();
   }, [user]);
+
+  useEffect(() => {
+    async function loadSkills() {
+      try {
+        const { data } = await supabase
+          .from('skills')
+          .select('name')
+          .limit(8);
+
+        if (data && data.length > 0) {
+          setSkillCategories(data.map((s: { name: string }) => s.name));
+        }
+      } catch (_) {
+        // Fallback silently if skills table is not yet populated
+      }
+    }
+
+    loadSkills();
+  }, []);
 
   const toggleFollow = async (creatorId: string) => {
     if (!user) {
@@ -87,22 +137,13 @@ export const RightSidebar: React.FC = () => {
     }
   };
 
-  const trendingSkills = [
-    'UI/UX Design',
-    'Flutter & Dart',
-    'Python Programming',
-    'Video Editing',
-    'Graphic Design',
-    'AI & Prompting',
-  ];
-
   return (
     <aside className="hidden xl:flex flex-col w-80 h-screen sticky top-0 px-6 py-8 overflow-y-auto shrink-0 select-none border-l border-[#292B34]/40">
       {/* Current User Card */}
       {profile && (
         <div
           onClick={() => navigate(`/u/${profile.username}`)}
-          className="flex items-center justify-between p-3 rounded-[14px] bg-[#15161B]/50 border border-[#292B34]/60 hover:border-[#393C47] transition-all cursor-pointer mb-6"
+          className="flex items-center justify-between p-3 rounded-[14px] bg-[#15161B]/50 border border-[#292B34]/60 hover:border-[#393C47] transition-all cursor-pointer mb-6 group"
         >
           <div className="flex items-center gap-3 overflow-hidden">
             <Avatar
@@ -117,8 +158,8 @@ export const RightSidebar: React.FC = () => {
               <span className="text-xs text-[#858995] truncate">@{profile.username}</span>
             </div>
           </div>
-          <span className="text-[11px] font-semibold text-[#E5484D] hover:underline shrink-0 ml-2">
-            Switch
+          <span className="text-[11px] font-semibold text-[#858995] group-hover:text-[#F5F5F7] shrink-0 ml-2">
+            Profile
           </span>
         </div>
       )}
@@ -161,7 +202,19 @@ export const RightSidebar: React.FC = () => {
         </div>
 
         <div className="flex flex-col gap-3">
-          {suggestedCreators.length > 0 ? (
+          {loadingCreators ? (
+            <div className="space-y-2 py-1">
+              {[1, 2, 3].map((n) => (
+                <div key={n} className="flex items-center gap-2.5 animate-pulse">
+                  <div className="w-8 h-8 rounded-full bg-[#1B1D24]" />
+                  <div className="flex-1 space-y-1">
+                    <div className="h-3 w-20 bg-[#1B1D24] rounded" />
+                    <div className="h-2 w-14 bg-[#15161B] rounded" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : suggestedCreators.length > 0 ? (
             suggestedCreators.map((creator) => {
               const isFollowing = !!followingMap[creator.id];
               return (
@@ -202,41 +255,41 @@ export const RightSidebar: React.FC = () => {
               );
             })
           ) : (
-            <p className="text-xs text-[#858995]">No creators found.</p>
+            <p className="text-xs text-[#858995] py-1">No suggestions available right now.</p>
           )}
         </div>
       </div>
 
-      {/* Trending Skills */}
-      <div className="mb-6">
-        <span className="text-xs font-bold text-[#858995] uppercase tracking-wider block mb-3">
-          Trending Skills
-        </span>
-        <div className="flex flex-wrap gap-1.5">
-          {trendingSkills.map((skill) => (
-            <button
-              key={skill}
-              onClick={() => navigate(`/explore?skill=${encodeURIComponent(skill)}`)}
-              className="text-xs px-2.5 py-1 rounded-[8px] bg-[#15161B] hover:bg-[#1B1D24] text-[#B0B3BD] hover:text-[#F5F5F7] border border-[#292B34] transition-colors"
-            >
-              #{skill}
-            </button>
-          ))}
+      {/* Available Skill Categories */}
+      {skillCategories.length > 0 && (
+        <div className="mb-6">
+          <span className="text-xs font-bold text-[#858995] uppercase tracking-wider block mb-3">
+            Skill Categories
+          </span>
+          <div className="flex flex-wrap gap-1.5">
+            {skillCategories.map((skill) => (
+              <button
+                key={skill}
+                onClick={() => navigate(`/communities?search=${encodeURIComponent(skill)}`)}
+                className="text-xs px-2.5 py-1 rounded-[8px] bg-[#15161B] hover:bg-[#1B1D24] text-[#B0B3BD] hover:text-[#F5F5F7] border border-[#292B34] transition-colors"
+              >
+                #{skill}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* Footer Info */}
+      {/* Footer Info with Valid Working Routes */}
       <div className="mt-auto pt-6 text-[11px] text-[#858995]/80 space-y-2 border-t border-[#292B34]/40">
         <div className="flex flex-wrap gap-x-2 gap-y-1">
-          <span className="hover:underline cursor-pointer">About</span>
+          <button onClick={() => navigate('/learn')} className="hover:underline hover:text-[#F5F5F7]">Learn</button>
           <span>•</span>
-          <span className="hover:underline cursor-pointer">Help</span>
+          <button onClick={() => navigate('/communities')} className="hover:underline hover:text-[#F5F5F7]">Communities</button>
           <span>•</span>
-          <span className="hover:underline cursor-pointer">Privacy</span>
+          <button onClick={() => navigate('/explore')} className="hover:underline hover:text-[#F5F5F7]">Explore</button>
           <span>•</span>
-          <span className="hover:underline cursor-pointer">Terms</span>
-          <span>•</span>
-          <span className="hover:underline cursor-pointer">Safety</span>
+          <button onClick={() => navigate('/settings')} className="hover:underline hover:text-[#F5F5F7]">Settings</button>
         </div>
         <p>© 2026 UPMIND — Learn. Create. Connect.</p>
       </div>

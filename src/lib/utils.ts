@@ -47,3 +47,45 @@ export function truncate(text: string, maxLen: number = 100): string {
   if (!text || text.length <= maxLen) return text || '';
   return text.substring(0, maxLen) + '...';
 }
+
+export function isVideoMedia(url?: string | null): boolean {
+  if (!url || typeof url !== 'string') return false;
+  const cleanUrl = url.toLowerCase().split('?')[0];
+  const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.m4v', '.mkv'];
+  if (videoExtensions.some((ext) => cleanUrl.endsWith(ext))) {
+    return true;
+  }
+  if (cleanUrl.includes('/reels_videos/')) {
+    return true;
+  }
+  if (url.startsWith('data:video/')) {
+    return true;
+  }
+  return false;
+}
+
+export function isReelPost(post: any): boolean {
+  if (!post || typeof post !== 'object') return false;
+
+  // Must have valid video media
+  const video = post.video_url || (isVideoMedia(post.image_url) ? post.image_url : null);
+  if (!video || typeof video !== 'string' || video.trim() === '') {
+    return false;
+  }
+
+  // Check explicit reel indicators
+  if (post.is_reel === true || post.post_type === 'reel' || post.post_type === 'video') {
+    return true;
+  }
+
+  // Check skill tags for #reel or #shortvideo
+  const tags = Array.isArray(post.skill_tags)
+    ? post.skill_tags.map((t: string) => (typeof t === 'string' ? t.toLowerCase() : ''))
+    : [];
+  if (tags.some((t: string) => t.includes('reel') || t.includes('shortvideo'))) {
+    return true;
+  }
+
+  return false;
+}
+

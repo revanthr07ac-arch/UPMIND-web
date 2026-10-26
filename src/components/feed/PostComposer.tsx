@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Image, Video, BookOpen, Tag, X, Upload } from 'lucide-react';
 import { Dialog } from '../common/Dialog';
 import { Button } from '../common/Button';
@@ -10,16 +10,34 @@ interface PostComposerProps {
   isOpen: boolean;
   onClose: () => void;
   onPostCreated?: () => void;
+  defaultPostType?: 'image' | 'tutorial' | 'reel' | 'text';
 }
+
+const ALLOWED_VIDEO_TYPES = [
+  'video/mp4',
+  'video/webm',
+  'video/quicktime',
+  'video/ogg',
+  'video/x-matroska',
+];
+const ALLOWED_IMAGE_TYPES = [
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'image/gif',
+];
+const MAX_VIDEO_SIZE = 100 * 1024 * 1024; // 100 MB
+const MAX_IMAGE_SIZE = 15 * 1024 * 1024; // 15 MB
 
 export const PostComposer: React.FC<PostComposerProps> = ({
   isOpen,
   onClose,
   onPostCreated,
+  defaultPostType = 'image',
 }) => {
   const { user, profile } = useAuth();
   const [caption, setCaption] = useState('');
-  const [postType, setPostType] = useState<'image' | 'tutorial' | 'reel' | 'text'>('image');
+  const [postType, setPostType] = useState<'image' | 'tutorial' | 'reel' | 'text'>(defaultPostType);
   const [mediaUrl, setMediaUrl] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
   const [educationalDescription, setEducationalDescription] = useState('');
@@ -27,6 +45,15 @@ export const PostComposer: React.FC<PostComposerProps> = ({
   const [isUploading, setIsUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      if (defaultPostType) {
+        setPostType(defaultPostType);
+      }
+      setError(null);
+    }
+  }, [isOpen, defaultPostType]);
 
   const popularSkills = [
     'UI/UX Design',
@@ -41,45 +68,81 @@ export const PostComposer: React.FC<PostComposerProps> = ({
     const file = e.target.files?.[0];
     if (!file || !user) return;
 
-    setIsUploading(true);
     setError(null);
+    const isVideo =
+      file.type.startsWith('video/') ||
+      file.name.match(/\.(mp4|webm|mov|ogg|mkv)$/i) !== null;
+
+    if (isVideo) {
+      if (file.size > MAX_VIDEO_SIZE) {
+        setError('Video file is too large. Maximum permitted size is 100MB.');
+        return;
+      }
+      if (
+        file.type &&
+        !ALLOWED_VIDEO_TYPES.includes(file.type) &&
+        !file.name.match(/\.(mp4|webm|mov|ogg|mkv)$/i)
+      ) {
+        setError('Unsupported video format. Please upload MP4, WebM, or MOV video.');
+        return;
+      }
+    } else {
+      if (file.size > MAX_IMAGE_SIZE) {
+        setError('Image file is too large. Maximum permitted size is 15MB.');
+        return;
+      }
+      if (
+        file.type &&
+        !ALLOWED_IMAGE_TYPES.includes(file.type) &&
+        !file.name.match(/\.(jpg|jpeg|png|webp|gif)$/i)
+      ) {
+        setError('Unsupported image format. Please upload JPG, PNG, or WebP.');
+        return;
+      }
+    }
+
+    setIsUploading(true);
 
     try {
-      const fileExt = file.name.split('.').pop();
+      const fileExt =
+        file.name.split('.').pop()?.toLowerCase() || (isVideo ? 'mp4' : 'jpg');
       const fileName = `${user.id}/${Date.now()}.${fileExt}`;
-      const isVideo = file.type.startsWith('video');
 
-      const bucket = isVideo ? 'reels_videos' : 'post_images';
-      const { data, error: uploadError } = await supabase.storage
-        .from(bucket)
+      const primaryBucket = isVideo ? 'reels_videos' : 'post_images';
+      let uploadResult = await supabase.storage
+        .from(primaryBucket)
         .upload(fileName, file, { upsert: true });
 
-      if (uploadError) {
-        // If storage bucket isn't configured, fallback to base64 preview
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          if (isVideo) {
-            setVideoUrl(reader.result as string);
-            setPostType('reel');
-          } else {
-            setMediaUrl(reader.result as string);
-          }
-          setIsUploading(false);
-        };
-        reader.readAsDataURL(file);
+      // If reels_videos fails (e.g. permissions or bucket missing), fallback to post_images
+      if (uploadResult.error && isVideo) {
+        uploadResult = await supabase.storage
+          .from('post_images')
+          .upload(fileName, file, { upsert: true });
+      }
+
+      if (uploadResult.error) {
+        setError(
+          `Upload failed: ${uploadResult.error.message || 'Storage error'}. Please try again or provide a direct video URL.`
+        );
+        setIsUploading(false);
         return;
       }
 
-      const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(data.path);
+      const bucketUsed =
+        isVideo && !uploadResult.error ? primaryBucket : 'post_images';
+      const { data: urlData } = supabase.storage
+        .from(bucketUsed)
+        .getPublicUrl(uploadResult.data.path);
+
       if (isVideo) {
         setVideoUrl(urlData.publicUrl);
         setPostType('reel');
       } else {
         setMediaUrl(urlData.publicUrl);
       }
-    } catch (err) {
-      console.error(err);
-      setError('Could not upload media. Please try again or provide an image link.');
+    } catch (err: any) {
+      console.error('File upload error:', err);
+      setError(err.message || 'Could not upload media. Please try again.');
     } finally {
       setIsUploading(false);
     }
@@ -104,42 +167,70 @@ export const PostComposer: React.FC<PostComposerProps> = ({
       return;
     }
 
+    const isReel = postType === 'reel';
+    const video = videoUrl.trim();
+
+    if (isReel && !video) {
+      setError('Please upload a video or provide a valid video link to publish a reel.');
+      return;
+    }
+
     setIsSubmitting(true);
     setError(null);
 
     try {
-      const isReel = postType === 'reel';
-      const { error: insertError } = await supabase.from('posts').insert({
+      const tags =
+        isReel && !skillTags.some((t) => t.toLowerCase().includes('reel'))
+          ? [...skillTags, '#Reel']
+          : skillTags;
+
+      const basePost = {
         author_id: user.id,
         caption: caption.trim(),
-        image_url: mediaUrl.trim() || null,
-        video_url: videoUrl.trim() || null,
-        post_type: isReel ? 'reel' : postType,
-        is_reel: isReel,
         educational_description: educationalDescription.trim() || null,
-        skill_tags: skillTags,
-        visibility: 'public',
+        skill_tags: tags,
+        visibility: 'public' as const,
         likes_count: 0,
         comments_count: 0,
+      };
+
+      // Attempt 1: Full Migration 012 schema
+      let insertResult = await supabase.from('posts').insert({
+        ...basePost,
+        image_url: mediaUrl.trim() || (isReel ? video : null),
+        video_url: isReel ? video : null,
+        post_type: isReel ? 'reel' : postType,
+        is_reel: isReel,
       });
 
-      if (insertError) {
-        // If 'reel' isn't supported in constraint, fallback to 'tutorial' or 'image'
-        if (insertError.message.includes('check constraint')) {
-          await supabase.from('posts').insert({
-            author_id: user.id,
-            caption: caption.trim(),
-            image_url: mediaUrl.trim() || videoUrl.trim() || null,
-            post_type: postType === 'text' ? 'text' : postType === 'tutorial' ? 'tutorial' : 'image',
-            educational_description: educationalDescription.trim() || null,
-            skill_tags: skillTags,
-            visibility: 'public',
-            likes_count: 0,
-            comments_count: 0,
-          });
-        } else {
-          throw insertError;
-        }
+      // Attempt 2: If video_url or is_reel columns do not exist in DB (code 42703)
+      if (
+        insertResult.error &&
+        (insertResult.error.code === '42703' ||
+          insertResult.error.message?.includes('does not exist'))
+      ) {
+        insertResult = await supabase.from('posts').insert({
+          ...basePost,
+          image_url: isReel ? video : mediaUrl.trim() || null,
+          post_type: isReel ? 'reel' : postType,
+        });
+      }
+
+      // Attempt 3: If check constraint fails on post_type = 'reel' (code 23514)
+      if (
+        insertResult.error &&
+        (insertResult.error.code === '23514' ||
+          insertResult.error.message?.includes('check constraint'))
+      ) {
+        insertResult = await supabase.from('posts').insert({
+          ...basePost,
+          image_url: isReel ? video : mediaUrl.trim() || null,
+          post_type: 'tutorial',
+        });
+      }
+
+      if (insertResult.error) {
+        throw insertResult.error;
       }
 
       // Reset form
@@ -149,6 +240,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
       setEducationalDescription('');
       setSkillTags(['#PeerLearning']);
       onPostCreated?.();
+      window.dispatchEvent(new CustomEvent('upmind:refreshFeed'));
       onClose();
     } catch (err: any) {
       console.error(err);
@@ -248,8 +340,8 @@ export const PostComposer: React.FC<PostComposerProps> = ({
         {/* Media Upload or Link */}
         <div className="flex flex-col gap-2">
           <label className="text-xs font-medium text-[#B0B3BD] flex items-center justify-between">
-            <span>{postType === 'reel' ? 'Video File or URL' : 'Image File or URL'}</span>
-            <span className="text-[10px] text-[#858995]">PNG, JPG, MP4</span>
+            <span>{postType === 'reel' ? 'Video File or URL (MP4, WebM, MOV)' : 'Image File or URL'}</span>
+            <span className="text-[10px] text-[#858995]">{postType === 'reel' ? 'Max 100MB' : 'Max 15MB'}</span>
           </label>
 
           <div className="flex items-center gap-2">
@@ -258,7 +350,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
               <span>{isUploading ? 'Uploading...' : 'Upload File'}</span>
               <input
                 type="file"
-                accept={postType === 'reel' ? 'video/*' : 'image/*'}
+                accept={postType === 'reel' ? 'video/mp4,video/webm,video/quicktime,video/*' : 'image/jpeg,image/png,image/webp,image/*'}
                 onChange={handleFileUpload}
                 disabled={isUploading}
                 className="hidden"

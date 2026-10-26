@@ -198,15 +198,71 @@ export interface Community {
   name: string;
   slug: string;
   description: string | null;
-  avatar_url: string | null;
-  cover_url: string | null;
+  avatar_url?: string | null;
+  cover_url?: string | null;
+  cover_image_path?: string | null;
   category: string;
-  is_private: boolean;
-  created_by: string;
+  is_private?: boolean;
+  visibility?: 'public' | 'private';
+  created_by?: string;
+  owner_id?: string;
+  owner?: Profile;
   members_count: number;
   created_at: string;
   updated_at: string;
   is_member?: boolean;
+  role?: 'owner' | 'moderator' | 'member' | 'admin';
+  membership_status?: 'none' | 'member' | 'pending' | 'rejected';
+}
+
+export interface CommunityMember {
+  id: string;
+  community_id: string;
+  user_id: string;
+  role: 'owner' | 'moderator' | 'member' | 'admin';
+  joined_at: string;
+  profile?: Profile;
+}
+
+export interface CommunityJoinRequest {
+  id: string;
+  community_id: string;
+  user_id: string;
+  status: 'pending' | 'approved' | 'rejected';
+  created_at: string;
+  updated_at: string;
+  profile?: Profile;
+}
+
+export interface CommunityPost {
+  id: string;
+  community_id: string;
+  author_id: string;
+  title?: string | null;
+  content: string;
+  created_at: string;
+  updated_at: string;
+  author?: Profile;
+  comments_count?: number;
+  media?: CommunityPostMedia[];
+}
+
+export interface CommunityPostComment {
+  id: string;
+  community_post_id: string;
+  author_id: string;
+  content: string;
+  created_at: string;
+  updated_at: string;
+  author?: Profile;
+}
+
+export interface CommunityPostMedia {
+  id: string;
+  community_post_id: string;
+  storage_path: string;
+  media_type: string;
+  created_at: string;
 }
 
 export interface Block {

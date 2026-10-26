@@ -13,6 +13,7 @@ import { NotificationsPage } from './pages/NotificationsPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { SavedPage } from './pages/SavedPage';
 import { CommunitiesPage } from './pages/CommunitiesPage';
+import { CommunityDetailPage } from './pages/CommunityDetailPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { LoginPage } from './pages/LoginPage';
 import { SignUpPage } from './pages/SignUpPage';
@@ -114,6 +115,14 @@ export function App() {
             element={
               <AppShell>
                 <CommunitiesPage />
+              </AppShell>
+            }
+          />
+          <Route
+            path="/communities/:communityId"
+            element={
+              <AppShell>
+                <CommunityDetailPage />
               </AppShell>
             }
           />
