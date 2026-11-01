@@ -37,7 +37,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
     location.pathname.startsWith('/settings');
 
   return (
-    <div className="min-h-screen bg-[#0B0C0F] text-[#F5F5F7] flex flex-col antialiased">
+    <div className="min-h-screen bg-app text-primary flex flex-col antialiased">
       {/* Top Header for Mobile & Tablet */}
       <MobileHeader />
 

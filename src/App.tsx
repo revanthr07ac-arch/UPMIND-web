@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { AppShell } from './components/layout/AppShell';
 import { RouteGuard } from './components/layout/RouteGuard';
 
@@ -21,7 +22,8 @@ import { NotFoundPage } from './pages/NotFoundPage';
 
 export function App() {
   return (
-    <BrowserRouter>
+    <ThemeProvider>
+      <BrowserRouter>
       <AuthProvider>
         <Routes>
           {/* Public Auth Routes */}
@@ -171,6 +173,7 @@ export function App() {
         </Routes>
       </AuthProvider>
     </BrowserRouter>
+  </ThemeProvider>
   );
 }
 

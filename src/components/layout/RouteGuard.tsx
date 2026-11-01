@@ -14,9 +14,9 @@ export const RouteGuard: React.FC<RouteGuardProps> = ({ children, requireAuth = 
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#0B0C0F] flex flex-col items-center justify-center gap-3">
-        <Loader2 className="w-8 h-8 animate-spin text-[#E5484D]" />
-        <span className="text-xs font-medium text-[#858995] tracking-wider uppercase">
+      <div className="min-h-screen bg-app flex flex-col items-center justify-center gap-3">
+        <Loader2 className="w-8 h-8 animate-spin text-[#FF304F]" />
+        <span className="text-xs font-medium text-muted tracking-wider uppercase">
           Loading Upmind...
         </span>
       </div>

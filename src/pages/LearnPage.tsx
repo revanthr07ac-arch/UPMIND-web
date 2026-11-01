@@ -214,28 +214,28 @@ export const LearnPage: React.FC = () => {
   return (
     <div className="w-full flex flex-col gap-6">
       {/* Page Header */}
-      <div className="flex flex-col gap-1.5 pb-2 border-b border-[#292B34]">
+      <div className="flex flex-col gap-1.5 pb-2 border-b border-theme">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-[10px] bg-[#E5484D]/15 text-[#E5484D] flex items-center justify-center">
+          <div className="w-8 h-8 rounded-[10px] bg-[#FF304F]/15 text-[#FF304F] flex items-center justify-center">
             <GraduationCap className="w-5 h-5" />
           </div>
-          <h1 className="text-xl font-bold text-[#F5F5F7] tracking-tight">
+          <h1 className="text-xl font-bold text-primary tracking-tight">
             Peer Learning Hub
           </h1>
         </div>
-        <p className="text-xs text-[#858995] leading-relaxed">
+        <p className="text-xs text-secondary leading-relaxed">
           Manage your skill material requests, share notes and source files with learners, and collaborate freely.
         </p>
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-2 p-1 bg-[#15161B] rounded-[12px] border border-[#292B34] select-none">
+      <div className="flex items-center gap-2 p-1 bg-surface-secondary rounded-[12px] border border-theme select-none">
         <button
           onClick={() => setActiveTab('received')}
           className={`flex-1 flex items-center justify-center gap-2 py-2 text-xs font-semibold rounded-[10px] transition-all ${
             activeTab === 'received'
-              ? 'bg-[#E5484D] text-white shadow-xs'
-              : 'text-[#B0B3BD] hover:text-[#F5F5F7]'
+              ? 'bg-[#FF304F] text-white shadow-xs'
+              : 'text-secondary hover:text-primary'
           }`}
         >
           <Inbox className="w-4 h-4" />
@@ -246,8 +246,8 @@ export const LearnPage: React.FC = () => {
           onClick={() => setActiveTab('sent')}
           className={`flex-1 flex items-center justify-center gap-2 py-2 text-xs font-semibold rounded-[10px] transition-all ${
             activeTab === 'sent'
-              ? 'bg-[#E5484D] text-white shadow-xs'
-              : 'text-[#B0B3BD] hover:text-[#F5F5F7]'
+              ? 'bg-[#FF304F] text-white shadow-xs'
+              : 'text-secondary hover:text-primary'
           }`}
         >
           <Send className="w-4 h-4" />
@@ -262,13 +262,13 @@ export const LearnPage: React.FC = () => {
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="w-full h-32 bg-[#15161B] border border-[#292B34] rounded-[16px] animate-pulse"
+                className="w-full h-32 bg-surface border border-theme rounded-[16px] animate-pulse"
               />
             ))}
           </div>
         ) : requests.length === 0 ? (
           <EmptyState
-            icon={<GraduationCap className="w-6 h-6 text-[#858995]" />}
+            icon={<GraduationCap className="w-6 h-6 text-muted" />}
             title={
               activeTab === 'received'
                 ? 'No incoming learning requests yet'
@@ -294,7 +294,7 @@ export const LearnPage: React.FC = () => {
             return (
               <div
                 key={req.id}
-                className="w-full bg-[#15161B] border border-[#292B34] rounded-[16px] p-4 flex flex-col gap-3 shadow-card hover:border-[#393C47] transition-all"
+                className="w-full bg-surface border border-theme rounded-[16px] p-4 flex flex-col gap-3 shadow-card hover:border-theme-strong transition-all"
               >
                 {/* Request Header */}
                 <div className="flex items-start justify-between gap-3">
@@ -313,15 +313,15 @@ export const LearnPage: React.FC = () => {
                           onClick={() =>
                             otherParty?.username && navigate(`/u/${otherParty.username}`)
                           }
-                          className="text-sm font-semibold text-[#F5F5F7] hover:underline cursor-pointer"
+                          className="text-sm font-semibold text-primary hover:underline cursor-pointer"
                         >
                           {otherPartyName}
                         </span>
-                        <span className="text-[11px] text-[#858995]">
+                        <span className="text-[11px] text-muted">
                           @{otherParty?.username}
                         </span>
                       </div>
-                      <span className="text-[11px] text-[#858995]">
+                      <span className="text-[11px] text-muted">
                         {formatTimeAgo(req.created_at)}
                       </span>
                     </div>
@@ -344,12 +344,12 @@ export const LearnPage: React.FC = () => {
                 </div>
 
                 {/* Skill tag & Message */}
-                <div className="bg-[#1B1D24] p-3 rounded-[12px] border border-[#292B34]/60 text-xs">
-                  <div className="flex items-center gap-1.5 text-[#E5484D] font-semibold mb-1.5">
+                <div className="bg-surface-secondary p-3 rounded-[12px] border border-theme text-xs">
+                  <div className="flex items-center gap-1.5 text-[#FF304F] font-semibold mb-1.5">
                     <GraduationCap className="w-3.5 h-3.5" />
                     <span>Skill: {req.skill?.name || 'General Practice'}</span>
                   </div>
-                  <p className="text-[#B0B3BD] leading-relaxed italic">
+                  <p className="text-secondary leading-relaxed italic">
                     &ldquo;{req.message}&rdquo;
                   </p>
                 </div>
@@ -364,7 +364,7 @@ export const LearnPage: React.FC = () => {
                           {req.resource_name || 'Authorized Learning Resource'}
                         </span>
                         {req.resource_note && (
-                          <span className="text-[11px] text-[#B0B3BD] truncate">
+                          <span className="text-[11px] text-white/80 truncate">
                             {req.resource_note}
                           </span>
                         )}
@@ -383,12 +383,12 @@ export const LearnPage: React.FC = () => {
                 )}
 
                 {/* Actions Bar */}
-                <div className="flex items-center justify-between pt-2 border-t border-[#292B34]/40">
+                <div className="flex items-center justify-between pt-2 border-t border-theme">
                   <button
                     onClick={() => otherParty?.id && startChatWith(otherParty.id)}
-                    className="flex items-center gap-1.5 text-xs font-medium text-[#B0B3BD] hover:text-[#F5F5F7] transition-colors"
+                    className="flex items-center gap-1.5 text-xs font-medium text-secondary hover:text-primary transition-colors"
                   >
-                    <MessageCircle className="w-3.5 h-3.5 text-[#E5484D]" />
+                    <MessageCircle className="w-3.5 h-3.5 text-[#FF304F]" />
                     <span>Message {isReceived ? 'Learner' : 'Creator'}</span>
                   </button>
 
@@ -399,7 +399,7 @@ export const LearnPage: React.FC = () => {
                         onClick={() =>
                           handleUpdateStatus(req.id, 'declined', req.learner_id)
                         }
-                        className="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-[#858995] hover:text-[#FF6269] transition-colors"
+                        className="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-muted hover:text-[#FF6269] transition-colors"
                       >
                         <XCircle className="w-3.5 h-3.5" />
                         <span>Decline</span>
@@ -407,7 +407,7 @@ export const LearnPage: React.FC = () => {
 
                       <button
                         onClick={() => setFulfillingRequest(req)}
-                        className="flex items-center gap-1 px-3 py-1.5 rounded-[8px] bg-[#E5484D] hover:bg-[#D7373F] text-white text-xs font-semibold shadow-xs transition-colors"
+                        className="flex items-center gap-1 px-3 py-1.5 rounded-[8px] bg-[#FF304F] hover:bg-[#E5203F] text-white text-xs font-semibold shadow-xs transition-colors"
                       >
                         <Sparkles className="w-3.5 h-3.5" />
                         <span>Attach Resources</span>
@@ -441,23 +441,23 @@ export const LearnPage: React.FC = () => {
           maxWidth="md"
         >
           <form onSubmit={handleFulfillSubmit} className="flex flex-col gap-4">
-            <p className="text-xs text-[#858995] leading-relaxed">
+            <p className="text-xs text-muted leading-relaxed">
               Attach practice notes, source files, GitHub links, Figma templates, or Google Drive resources for{' '}
-              <strong className="text-white">
+              <strong className="text-primary">
                 @{fulfillingRequest.learner?.username}
               </strong>
               .
             </p>
 
             {/* Resource Type */}
-            <div className="flex items-center gap-2 p-1 bg-[#1B1D24] rounded-[10px] border border-[#292B34]">
+            <div className="flex items-center gap-2 p-1 bg-surface-secondary rounded-[10px] border border-theme">
               <button
                 type="button"
                 onClick={() => setResourceType('link')}
                 className={`flex-1 py-1.5 text-xs font-semibold rounded-[8px] transition-colors flex items-center justify-center gap-1 ${
                   resourceType === 'link'
-                    ? 'bg-[#E5484D] text-white'
-                    : 'text-[#B0B3BD] hover:text-white'
+                    ? 'bg-[#FF304F] text-white'
+                    : 'text-secondary hover:text-primary'
                 }`}
               >
                 <Link className="w-3.5 h-3.5" />
@@ -469,8 +469,8 @@ export const LearnPage: React.FC = () => {
                 onClick={() => setResourceType('file')}
                 className={`flex-1 py-1.5 text-xs font-semibold rounded-[8px] transition-colors flex items-center justify-center gap-1 ${
                   resourceType === 'file'
-                    ? 'bg-[#E5484D] text-white'
-                    : 'text-[#B0B3BD] hover:text-white'
+                    ? 'bg-[#FF304F] text-white'
+                    : 'text-secondary hover:text-primary'
                 }`}
               >
                 <Upload className="w-3.5 h-3.5" />
@@ -480,40 +480,40 @@ export const LearnPage: React.FC = () => {
 
             {/* Title */}
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-medium text-[#B0B3BD]">Resource Name</label>
+              <label className="text-xs font-medium text-secondary">Resource Name</label>
               <input
                 type="text"
                 required
                 value={resourceTitle}
                 onChange={(e) => setResourceTitle(e.target.value)}
                 placeholder="e.g., Complete UI Kit Figma File or Python Starter Code"
-                className="w-full bg-[#15161B] text-[#F5F5F7] placeholder-[#858995] text-xs rounded-[10px] border border-[#292B34] p-2.5 focus:border-[#FF7479] focus:outline-none"
+                className="w-full bg-surface text-primary placeholder-[#9297A2] text-xs rounded-[10px] border border-theme p-2.5 focus:border-[#FF304F] focus:outline-none"
               />
             </div>
 
             {/* URL or Upload */}
             {resourceType === 'link' ? (
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-medium text-[#B0B3BD]">Resource URL</label>
+                <label className="text-xs font-medium text-secondary">Resource URL</label>
                 <input
                   type="url"
                   required
                   value={resourceUrl}
                   onChange={(e) => setResourceUrl(e.target.value)}
                   placeholder="https://github.com/... or https://figma.com/..."
-                  className="w-full bg-[#15161B] text-[#F5F5F7] placeholder-[#858995] text-xs rounded-[10px] border border-[#292B34] p-2.5 focus:border-[#FF7479] focus:outline-none"
+                  className="w-full bg-surface text-primary placeholder-[#9297A2] text-xs rounded-[10px] border border-theme p-2.5 focus:border-[#FF304F] focus:outline-none"
                 />
               </div>
             ) : (
               <div className="flex flex-col gap-2">
-                <label className="text-xs font-medium text-[#B0B3BD]">File Attachment</label>
+                <label className="text-xs font-medium text-secondary">File Attachment</label>
                 <input
                   type="file"
                   onChange={handleFileUpload}
-                  className="text-xs text-[#858995] file:mr-3 file:py-1.5 file:px-3 file:rounded-[8px] file:border-0 file:text-xs file:font-semibold file:bg-[#E5484D] file:text-white hover:file:bg-[#D7373F]"
+                  className="text-xs text-muted file:mr-3 file:py-1.5 file:px-3 file:rounded-[8px] file:border-0 file:text-xs file:font-semibold file:bg-[#FF304F] file:text-white hover:file:bg-[#E5203F]"
                 />
                 {isUploading && (
-                  <span className="text-[11px] text-[#E5484D]">Uploading file...</span>
+                  <span className="text-[11px] text-[#FF304F]">Uploading file...</span>
                 )}
                 {resourceUrl && (
                   <span className="text-[11px] text-[#35B883]">
@@ -525,7 +525,7 @@ export const LearnPage: React.FC = () => {
 
             {/* Note */}
             <div className="flex flex-col gap-1">
-              <label className="text-xs font-medium text-[#B0B3BD]">
+              <label className="text-xs font-medium text-secondary">
                 Guidance Note (Optional advice for learner)
               </label>
               <textarea
@@ -533,12 +533,12 @@ export const LearnPage: React.FC = () => {
                 onChange={(e) => setResourceNote(e.target.value)}
                 rows={2}
                 placeholder="Check out exercises 3 and 4 first..."
-                className="w-full bg-[#15161B] text-[#F5F5F7] placeholder-[#858995] text-xs rounded-[10px] border border-[#292B34] p-2.5 focus:border-[#FF7479] focus:outline-none"
+                className="w-full bg-surface text-primary placeholder-[#9297A2] text-xs rounded-[10px] border border-theme p-2.5 focus:border-[#FF304F] focus:outline-none"
               />
             </div>
 
             {/* Actions */}
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#292B34]/60">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-theme">
               <Button
                 type="button"
                 variant="ghost"

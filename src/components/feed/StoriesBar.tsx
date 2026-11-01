@@ -5,7 +5,7 @@ import { StoryViewerModal } from './StoryViewerModal';
 import { StoryComposerModal } from './StoryComposerModal';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
-import type { Story, Profile } from '../../types/database';
+import type { Story } from '../../types/database';
 
 export const StoriesBar: React.FC = () => {
   const { user, profile } = useAuth();
@@ -25,50 +25,45 @@ export const StoriesBar: React.FC = () => {
       if (!error && data && data.length > 0) {
         setStories(data as Story[]);
       } else {
-        // Fallback default sample creators with stories to ensure vibrant presentation
-        const { data: profiles } = await supabase.from('profiles').select('*').limit(6);
-        if (profiles && profiles.length > 0) {
-          const sampleStories: Story[] = profiles.map((p, idx) => ({
-            id: `story-${p.id}`,
-            user_id: p.id,
-            media_url:
-              p.avatar_url ||
-              'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80',
-            media_type: 'image',
-            caption: `Sharing my new ${idx % 2 === 0 ? 'UI/UX' : 'coding'} practice work!`,
-            created_at: new Date().toISOString(),
-            expires_at: new Date(Date.now() + 86400000).toISOString(),
-            author: p as Profile,
-          }));
-          setStories(sampleStories);
-        }
+        // Only real published stories - never display fake or sample stories
+        setStories([]);
       }
-    } catch (_) {}
+    } catch (_) {
+      setStories([]);
+    }
   };
 
   useEffect(() => {
     loadStories();
+
+    const handleRefresh = () => loadStories();
+    window.addEventListener('upmind:refreshStories', handleRefresh);
+    window.addEventListener('upmind:refreshFeed', handleRefresh);
+    return () => {
+      window.removeEventListener('upmind:refreshStories', handleRefresh);
+      window.removeEventListener('upmind:refreshFeed', handleRefresh);
+    };
   }, [user]);
 
   const hasMyStory = stories.some((s) => s.user_id === user?.id);
 
   return (
     <>
-      <div className="w-full bg-[#15161B] border border-[#292B34] rounded-[16px] p-3.5 sm:p-4 mb-5 overflow-x-auto select-none no-scrollbar">
+      <div className="w-full bg-surface border border-theme rounded-[16px] p-3.5 sm:p-4 mb-5 overflow-x-auto select-none no-scrollbar">
         <div className="flex items-center gap-4 min-w-max">
           {/* Your Story Avatar */}
-          <div className="flex flex-col items-center gap-1.5 cursor-pointer group">
-            <div
-              className="relative"
-              onClick={() => {
-                if (hasMyStory) {
-                  const myIndex = stories.findIndex((s) => s.user_id === user?.id);
-                  setActiveStoryIndex(myIndex >= 0 ? myIndex : 0);
-                } else {
-                  setIsComposerOpen(true);
-                }
-              }}
-            >
+          <div
+            className="flex flex-col items-center gap-1.5 cursor-pointer group shrink-0"
+            onClick={() => {
+              if (hasMyStory) {
+                const myIndex = stories.findIndex((s) => s.user_id === user?.id);
+                setActiveStoryIndex(myIndex >= 0 ? myIndex : 0);
+              } else {
+                setIsComposerOpen(true);
+              }
+            }}
+          >
+            <div className="relative">
               <Avatar
                 src={profile?.avatar_url}
                 name={profile?.full_name || profile?.username}
@@ -81,13 +76,14 @@ export const StoriesBar: React.FC = () => {
                     e.stopPropagation();
                     setIsComposerOpen(true);
                   }}
-                  className="absolute bottom-0 right-0 w-5 h-5 bg-[#E5484D] text-white rounded-full flex items-center justify-center border-2 border-[#15161B] group-hover:scale-110 transition-transform"
+                  className="absolute bottom-0 right-0 w-5 h-5 bg-[#FF304F] text-white rounded-full flex items-center justify-center border-2 border-surface group-hover:scale-110 transition-transform"
+                  title="Add Your Story"
                 >
                   <Plus className="w-3.5 h-3.5" />
                 </div>
               )}
             </div>
-            <span className="text-[11px] font-medium text-[#B0B3BD] max-w-[64px] truncate text-center">
+            <span className="text-[11px] font-medium text-secondary max-w-[64px] truncate text-center">
               Your story
             </span>
           </div>
@@ -101,7 +97,7 @@ export const StoriesBar: React.FC = () => {
                 <div
                   key={story.id}
                   onClick={() => setActiveStoryIndex(actualIndex)}
-                  className="flex flex-col items-center gap-1.5 cursor-pointer group"
+                  className="flex flex-col items-center gap-1.5 cursor-pointer group shrink-0"
                 >
                   <Avatar
                     src={story.author?.avatar_url}
@@ -109,12 +105,26 @@ export const StoriesBar: React.FC = () => {
                     size="lg"
                     hasStory={true}
                   />
-                  <span className="text-[11px] font-medium text-[#B0B3BD] group-hover:text-white max-w-[64px] truncate text-center">
+                  <span className="text-[11px] font-medium text-secondary group-hover:text-primary max-w-[64px] truncate text-center">
                     {story.author?.username || 'creator'}
                   </span>
                 </div>
               );
             })}
+
+          {/* Clean Empty State when nobody has uploaded a story */}
+          {stories.length === 0 && (
+            <div className="flex items-center gap-2.5 pl-3 py-1 text-xs border-l border-theme">
+              <span className="text-secondary font-medium">No stories yet</span>
+              <button
+                type="button"
+                onClick={() => setIsComposerOpen(true)}
+                className="px-2.5 py-1 text-[11px] font-semibold text-[#FF304F] hover:bg-[#FF304F]/10 rounded-[8px] border border-[#FF304F]/30 transition-colors cursor-pointer"
+              >
+                Add Your Story
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -125,6 +135,7 @@ export const StoriesBar: React.FC = () => {
           onClose={() => setActiveStoryIndex(null)}
           stories={stories}
           initialIndex={activeStoryIndex}
+          onStoryDeleted={loadStories}
         />
       )}
 

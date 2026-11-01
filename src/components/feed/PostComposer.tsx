@@ -261,22 +261,22 @@ export const PostComposer: React.FC<PostComposerProps> = ({
             size="md"
           />
           <div className="flex flex-col">
-            <span className="text-sm font-semibold text-[#F5F5F7]">
+            <span className="text-sm font-semibold text-primary">
               {profile?.display_name || profile?.full_name || profile?.username}
             </span>
-            <span className="text-xs text-[#858995]">Share skills & peer learning</span>
+            <span className="text-xs text-secondary">Share skills & peer learning</span>
           </div>
         </div>
 
         {/* Post Type Selector */}
-        <div className="flex items-center gap-2 p-1 bg-[#1B1D24] rounded-[12px] border border-[#292B34]">
+        <div className="flex items-center gap-2 p-1 bg-surface-secondary rounded-[12px] border border-theme">
           <button
             type="button"
             onClick={() => setPostType('image')}
             className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 text-xs font-semibold rounded-[8px] transition-colors ${
               postType === 'image'
                 ? 'bg-[#E5484D] text-white shadow-xs'
-                : 'text-[#B0B3BD] hover:text-white'
+                : 'text-secondary hover:text-primary'
             }`}
           >
             <Image className="w-3.5 h-3.5" />
@@ -289,7 +289,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
             className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 text-xs font-semibold rounded-[8px] transition-colors ${
               postType === 'reel'
                 ? 'bg-[#E5484D] text-white shadow-xs'
-                : 'text-[#B0B3BD] hover:text-white'
+                : 'text-secondary hover:text-primary'
             }`}
           >
             <Video className="w-3.5 h-3.5" />
@@ -302,7 +302,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
             className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 text-xs font-semibold rounded-[8px] transition-colors ${
               postType === 'tutorial'
                 ? 'bg-[#E5484D] text-white shadow-xs'
-                : 'text-[#B0B3BD] hover:text-white'
+                : 'text-secondary hover:text-primary'
             }`}
           >
             <BookOpen className="w-3.5 h-3.5" />
@@ -317,13 +317,13 @@ export const PostComposer: React.FC<PostComposerProps> = ({
           placeholder="What skill are you sharing today? (e.g., Clean Architecture in Flutter, Figma Auto-Layout tips...)"
           rows={3}
           required
-          className="w-full bg-[#15161B] text-[#F5F5F7] placeholder-[#858995] text-sm rounded-[12px] border border-[#292B34] p-3.5 focus:border-[#FF7479] focus:outline-none focus:ring-1 focus:ring-[#FF7479] transition-all"
+          className="w-full bg-surface text-primary placeholder-[#9297A2] text-sm rounded-[12px] border border-theme p-3.5 focus:border-[#FF304F] focus:outline-none focus:ring-1 focus:ring-[#FF304F] transition-all"
         />
 
         {/* Tutorial Breakdown Section */}
         {postType === 'tutorial' && (
-          <div className="flex flex-col gap-1.5 bg-[#1B1D24]/50 border border-[#292B34] rounded-[12px] p-3">
-            <span className="text-xs font-semibold text-[#E5484D] flex items-center gap-1">
+          <div className="flex flex-col gap-1.5 bg-surface-secondary border border-theme rounded-[12px] p-3">
+            <span className="text-xs font-semibold text-[#FF304F] flex items-center gap-1">
               <BookOpen className="w-3.5 h-3.5" />
               Step-by-step breakdown (Lesson details)
             </span>
@@ -332,21 +332,21 @@ export const PostComposer: React.FC<PostComposerProps> = ({
               onChange={(e) => setEducationalDescription(e.target.value)}
               placeholder="Outline the steps or concepts: Step 1: ..., Step 2: ..., Concepts learned..."
               rows={3}
-              className="w-full bg-[#15161B] text-[#F5F5F7] placeholder-[#858995] text-xs rounded-[8px] border border-[#292B34] p-2.5 focus:border-[#FF7479] focus:outline-none"
+              className="w-full bg-surface text-primary placeholder-[#9297A2] text-xs rounded-[8px] border border-theme p-2.5 focus:border-[#FF304F] focus:outline-none"
             />
           </div>
         )}
 
         {/* Media Upload or Link */}
         <div className="flex flex-col gap-2">
-          <label className="text-xs font-medium text-[#B0B3BD] flex items-center justify-between">
+          <label className="text-xs font-medium text-secondary flex items-center justify-between">
             <span>{postType === 'reel' ? 'Video File or URL (MP4, WebM, MOV)' : 'Image File or URL'}</span>
-            <span className="text-[10px] text-[#858995]">{postType === 'reel' ? 'Max 100MB' : 'Max 15MB'}</span>
+            <span className="text-[10px] text-muted">{postType === 'reel' ? 'Max 100MB' : 'Max 15MB'}</span>
           </label>
 
           <div className="flex items-center gap-2">
-            <label className="flex items-center gap-2 px-3 py-2 bg-[#1B1D24] hover:bg-[#282A32] text-[#F5F5F7] text-xs font-medium rounded-[10px] border border-[#292B34] cursor-pointer transition-colors shrink-0">
-              <Upload className="w-3.5 h-3.5 text-[#E5484D]" />
+            <label className="flex items-center gap-2 px-3 py-2 bg-surface-secondary hover:bg-surface-tertiary text-primary text-xs font-medium rounded-[10px] border border-theme cursor-pointer transition-colors shrink-0">
+              <Upload className="w-3.5 h-3.5 text-[#FF304F]" />
               <span>{isUploading ? 'Uploading...' : 'Upload File'}</span>
               <input
                 type="file"
@@ -364,13 +364,13 @@ export const PostComposer: React.FC<PostComposerProps> = ({
                 postType === 'reel' ? setVideoUrl(e.target.value) : setMediaUrl(e.target.value)
               }
               placeholder="Or paste public media URL..."
-              className="flex-1 bg-[#15161B] text-[#F5F5F7] placeholder-[#858995] text-xs rounded-[10px] border border-[#292B34] px-3 py-2 focus:border-[#FF7479] focus:outline-none"
+              className="flex-1 bg-surface text-primary placeholder-[#9297A2] text-xs rounded-[10px] border border-theme px-3 py-2 focus:border-[#FF304F] focus:outline-none"
             />
           </div>
 
           {/* Media Preview */}
           {(mediaUrl || videoUrl) && (
-            <div className="relative mt-2 rounded-[12px] overflow-hidden border border-[#292B34] max-h-48 bg-black flex items-center justify-center">
+            <div className="relative mt-2 rounded-[12px] overflow-hidden border border-theme max-h-48 bg-black flex items-center justify-center">
               {postType === 'reel' || videoUrl ? (
                 <video src={videoUrl} controls className="max-h-48 w-full object-contain" />
               ) : (
@@ -392,8 +392,8 @@ export const PostComposer: React.FC<PostComposerProps> = ({
 
         {/* Skill Tags */}
         <div className="flex flex-col gap-2">
-          <label className="text-xs font-medium text-[#B0B3BD] flex items-center gap-1">
-            <Tag className="w-3.5 h-3.5 text-[#E5484D]" />
+          <label className="text-xs font-medium text-secondary flex items-center gap-1">
+            <Tag className="w-3.5 h-3.5 text-[#FF304F]" />
             <span>Skill Tags (enables peer learners to find and request materials)</span>
           </label>
 
@@ -402,13 +402,13 @@ export const PostComposer: React.FC<PostComposerProps> = ({
             {skillTags.map((tag) => (
               <span
                 key={tag}
-                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-[8px] bg-[#E5484D]/10 text-[#E5484D] border border-[#E5484D]/30 text-xs font-medium"
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-[8px] bg-[#FF304F]/10 text-[#FF304F] border border-[#FF304F]/30 text-xs font-medium"
               >
                 {tag}
                 <button
                   type="button"
                   onClick={() => handleRemoveTag(tag)}
-                  className="hover:text-white"
+                  className="hover:opacity-80"
                 >
                   <X className="w-3 h-3" />
                 </button>
@@ -423,7 +423,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
                 key={s}
                 type="button"
                 onClick={() => handleAddTag(s)}
-                className="text-[11px] px-2 py-0.5 rounded-[6px] bg-[#1B1D24] text-[#B0B3BD] hover:text-[#F5F5F7] hover:bg-[#282A32] border border-[#292B34] transition-colors"
+                className="text-[11px] px-2 py-0.5 rounded-[6px] bg-surface-secondary text-secondary hover:text-primary hover:bg-surface-tertiary border border-theme transition-colors"
               >
                 +{s}
               </button>
@@ -434,7 +434,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
         {error && <span className="text-xs text-[#FF6269] mt-1">{error}</span>}
 
         {/* Submit Actions */}
-        <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#292B34]/60">
+        <div className="flex items-center justify-end gap-2 pt-3 border-t border-theme">
           <Button type="button" variant="ghost" size="sm" onClick={onClose}>
             Cancel
           </Button>

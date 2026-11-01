@@ -52,7 +52,7 @@ export const Dialog: React.FC<DialogProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/75 backdrop-blur-xs transition-opacity"
+        className="fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -62,23 +62,23 @@ export const Dialog: React.FC<DialogProps> = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby={title ? 'dialog-title' : undefined}
-        className={`relative w-full ${maxWidthClasses[maxWidth]} bg-[#15161B] border border-[#292B34] rounded-[16px] shadow-2xl p-5 z-10 animate-fade-in overflow-hidden max-h-[90vh] flex flex-col`}
+        className={`relative w-full ${maxWidthClasses[maxWidth]} bg-surface border border-theme rounded-[16px] shadow-elevated p-5 z-10 animate-fade-in overflow-hidden max-h-[90vh] flex flex-col`}
       >
-        <div className="flex items-center justify-between pb-3 border-b border-[#292B34]/60">
+        <div className="flex items-center justify-between pb-3 border-b border-theme">
           <div>
             {title && (
-              <h2 id="dialog-title" className="text-base font-semibold text-[#F5F5F7]">
+              <h2 id="dialog-title" className="text-base font-semibold text-primary">
                 {title}
               </h2>
             )}
             {description && (
-              <p className="text-xs text-[#858995] mt-0.5">{description}</p>
+              <p className="text-xs text-muted mt-0.5">{description}</p>
             )}
           </div>
           <button
             onClick={onClose}
             aria-label="Close dialog"
-            className="text-[#858995] hover:text-[#F5F5F7] p-1.5 rounded-[8px] hover:bg-[#1B1D24] transition-colors"
+            className="text-muted hover:text-primary p-1.5 rounded-[8px] hover:bg-surface-secondary transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>

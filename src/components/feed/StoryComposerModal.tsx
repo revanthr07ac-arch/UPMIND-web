@@ -92,6 +92,7 @@ export const StoryComposerModal: React.FC<StoryComposerModalProps> = ({
       setCaption('');
       setMediaUrl('');
       onStoryCreated?.();
+      window.dispatchEvent(new CustomEvent('upmind:refreshStories'));
       onClose();
     } catch (err: any) {
       console.error(err);
@@ -104,15 +105,15 @@ export const StoryComposerModal: React.FC<StoryComposerModalProps> = ({
   return (
     <Dialog isOpen={isOpen} onClose={onClose} title="Add to Story (24hr)" maxWidth="sm">
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <p className="text-xs text-[#858995]">
+        <p className="text-xs text-muted">
           Share quick daily practice snapshots, work-in-progress, or questions. Disappears after 24 hours.
         </p>
 
         {/* Media Upload or Link */}
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
-            <label className="flex items-center gap-2 px-3 py-2 bg-[#1B1D24] hover:bg-[#282A32] text-[#F5F5F7] text-xs font-medium rounded-[10px] border border-[#292B34] cursor-pointer transition-colors shrink-0">
-              <Upload className="w-3.5 h-3.5 text-[#E5484D]" />
+            <label className="flex items-center gap-2 px-3 py-2 bg-surface-secondary hover:bg-surface-tertiary text-primary text-xs font-medium rounded-[10px] border border-theme cursor-pointer transition-colors shrink-0">
+              <Upload className="w-3.5 h-3.5 text-[#FF304F]" />
               <span>{isUploading ? 'Uploading...' : 'Choose Media'}</span>
               <input
                 type="file"
@@ -128,13 +129,13 @@ export const StoryComposerModal: React.FC<StoryComposerModalProps> = ({
               value={mediaUrl}
               onChange={(e) => setMediaUrl(e.target.value)}
               placeholder="Or paste image/video URL..."
-              className="flex-1 bg-[#15161B] text-[#F5F5F7] placeholder-[#858995] text-xs rounded-[10px] border border-[#292B34] px-3 py-2 focus:border-[#FF7479] focus:outline-none"
+              className="flex-1 bg-surface text-primary placeholder-[#9297A2] text-xs rounded-[10px] border border-theme px-3 py-2 focus:border-[#FF304F] focus:outline-none"
             />
           </div>
 
           {/* Media Preview */}
           {mediaUrl && (
-            <div className="relative mt-2 rounded-[14px] overflow-hidden border border-[#292B34] h-60 bg-black flex items-center justify-center">
+            <div className="relative mt-2 rounded-[14px] overflow-hidden border border-theme h-60 bg-black flex items-center justify-center">
               {mediaType === 'video' ? (
                 <video src={mediaUrl} controls className="h-full w-full object-contain" />
               ) : (
@@ -158,12 +159,12 @@ export const StoryComposerModal: React.FC<StoryComposerModalProps> = ({
           onChange={(e) => setCaption(e.target.value)}
           placeholder="Add an optional story caption..."
           maxLength={100}
-          className="w-full bg-[#15161B] text-[#F5F5F7] placeholder-[#858995] text-xs rounded-[10px] border border-[#292B34] px-3 py-2 focus:border-[#FF7479] focus:outline-none"
+          className="w-full bg-surface text-primary placeholder-[#9297A2] text-xs rounded-[10px] border border-theme px-3 py-2 focus:border-[#FF304F] focus:outline-none"
         />
 
         {error && <span className="text-xs text-[#FF6269]">{error}</span>}
 
-        <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#292B34]/60">
+        <div className="flex items-center justify-end gap-2 pt-2 border-t border-theme">
           <Button type="button" variant="ghost" size="sm" onClick={onClose}>
             Cancel
           </Button>

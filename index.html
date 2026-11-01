@@ -1,19 +1,42 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en" class="light">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-    <meta name="theme-color" content="#0B0C0F" />
+    <meta name="theme-color" content="#F8F9FC" />
     <meta name="description" content="UPMIND — Learn. Create. Connect. An Instagram-inspired social network for skill-sharing, creator portfolios, and free peer-to-peer learning." />
     <title>UPMIND — Learn. Create. Connect.</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+      (function() {
+        try {
+          var saved = localStorage.getItem('upmind_theme');
+          var isDark = saved === 'dark';
+          var root = document.documentElement;
+          if (isDark) {
+            root.classList.add('dark');
+            root.classList.remove('light');
+            root.setAttribute('data-theme', 'dark');
+            root.style.colorScheme = 'dark';
+            var meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute('content', '#121212');
+          } else {
+            root.classList.add('light');
+            root.classList.remove('dark');
+            root.setAttribute('data-theme', 'light');
+            root.style.colorScheme = 'light';
+            var metaLight = document.querySelector('meta[name="theme-color"]');
+            if (metaLight) metaLight.setAttribute('content', '#F8F9FC');
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
-  <body class="bg-[#0B0C0F] text-[#F5F5F7] antialiased selection:bg-[#E5484D] selection:text-white">
+  <body class="bg-app text-primary antialiased selection:bg-[#FF304F] selection:text-white">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-

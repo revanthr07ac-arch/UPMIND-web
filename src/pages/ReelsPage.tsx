@@ -452,9 +452,9 @@ export const ReelsPage: React.FC = () => {
   if (isLoading) {
     return (
       <div className="w-full flex items-center justify-center py-6 select-none">
-        <div className="relative w-full max-w-[420px] h-[78vh] sm:h-[82vh] bg-[#15161B] rounded-[24px] overflow-hidden border border-[#292B34] shadow-2xl flex flex-col items-center justify-center gap-3 animate-pulse">
-          <div className="w-9 h-9 border-2 border-[#E5484D] border-t-transparent rounded-full animate-spin" />
-          <span className="text-xs font-semibold text-[#858995] tracking-wider uppercase">
+        <div className="relative w-full max-w-[420px] h-[78vh] sm:h-[82vh] bg-surface rounded-[24px] overflow-hidden border border-theme shadow-2xl flex flex-col items-center justify-center gap-3 animate-pulse">
+          <div className="w-9 h-9 border-2 border-[#FF304F] border-t-transparent rounded-full animate-spin" />
+          <span className="text-xs font-semibold text-muted tracking-wider uppercase">
             Loading Reels...
           </span>
         </div>
@@ -466,15 +466,15 @@ export const ReelsPage: React.FC = () => {
   if (error) {
     return (
       <div className="w-full flex items-center justify-center py-12 select-none">
-        <div className="w-full max-w-md bg-[#15161B] border border-[#292B34] rounded-[20px] p-8 text-center flex flex-col items-center shadow-xl">
-          <div className="w-14 h-14 rounded-full bg-[#32191D] border border-[#E5484D]/30 flex items-center justify-center text-[#FF6269] mb-4">
+        <div className="w-full max-w-md bg-surface border border-theme rounded-[20px] p-8 text-center flex flex-col items-center shadow-xl">
+          <div className="w-14 h-14 rounded-full bg-[#FF304F]/10 border border-[#FF304F]/30 flex items-center justify-center text-[#FF304F] mb-4">
             <AlertCircle className="w-7 h-7" />
           </div>
-          <h2 className="text-lg font-bold text-[#F5F5F7] mb-2">Unable to load reels</h2>
-          <p className="text-xs text-[#858995] mb-6 max-w-sm leading-relaxed">{error}</p>
+          <h2 className="text-lg font-bold text-primary mb-2">Unable to load reels</h2>
+          <p className="text-xs text-secondary mb-6 max-w-sm leading-relaxed">{error}</p>
           <button
             onClick={() => loadReels()}
-            className="inline-flex items-center gap-2 bg-[#E5484D] hover:bg-[#D7373F] active:bg-[#BE3038] text-white text-xs font-semibold px-5 py-2.5 rounded-[12px] shadow-sm transition-all active:scale-[0.98] cursor-pointer"
+            className="inline-flex items-center gap-2 bg-[#FF304F] hover:bg-[#E5203F] text-white text-xs font-semibold px-5 py-2.5 rounded-[12px] shadow-sm transition-all active:scale-[0.98] cursor-pointer"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>Try Again</span>
@@ -488,19 +488,19 @@ export const ReelsPage: React.FC = () => {
   if (!currentReel || reels.length === 0) {
     return (
       <div className="w-full flex items-center justify-center py-12 sm:py-16 select-none">
-        <div className="w-full max-w-md bg-[#101116] border border-dashed border-[#292B34] rounded-[24px] p-8 sm:p-10 text-center flex flex-col items-center shadow-2xl animate-fade-in">
-          <div className="w-16 h-16 rounded-full bg-[#1B1D24] border border-[#292B34] flex items-center justify-center text-[#E5484D] mb-4 shadow-md">
+        <div className="w-full max-w-md bg-surface border border-dashed border-theme rounded-[24px] p-8 sm:p-10 text-center flex flex-col items-center shadow-2xl animate-fade-in">
+          <div className="w-16 h-16 rounded-full bg-surface-secondary border border-theme flex items-center justify-center text-[#FF304F] mb-4 shadow-md">
             <Film className="w-8 h-8" />
           </div>
-          <h2 className="text-xl sm:text-2xl font-bold text-[#F5F5F7] mb-2 tracking-tight">
+          <h2 className="text-xl sm:text-2xl font-bold text-primary mb-2 tracking-tight">
             No reels yet
           </h2>
-          <p className="text-xs sm:text-sm text-[#858995] mb-6 max-w-sm leading-relaxed">
+          <p className="text-xs sm:text-sm text-secondary mb-6 max-w-sm leading-relaxed">
             Be the first to share a skill, tutorial, or creative moment with the Upmind community.
           </p>
           <button
             onClick={handleCreateReel}
-            className="inline-flex items-center gap-2 bg-[#E5484D] hover:bg-[#D7373F] active:bg-[#BE3038] text-white text-sm font-semibold px-6 py-3 rounded-[12px] shadow-lg shadow-[#E5484D]/25 transition-all active:scale-[0.98] cursor-pointer"
+            className="inline-flex items-center gap-2 bg-[#E5484D] hover:bg-[#D7373F] active:bg-[#BE3038] text-white text-sm font-semibold px-6 py-3 rounded-[12px] shadow-lg shadow-[#FF304F]/25 transition-all active:scale-[0.98] cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>Create a Reel</span>
@@ -523,7 +523,7 @@ export const ReelsPage: React.FC = () => {
       <div
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
-        className="relative w-full max-w-[420px] h-[78vh] sm:h-[82vh] bg-black rounded-[24px] overflow-hidden border border-[#292B34] shadow-2xl flex flex-col justify-between"
+        className="relative w-full max-w-[420px] h-[78vh] sm:h-[82vh] bg-black rounded-[24px] overflow-hidden border border-theme shadow-2xl flex flex-col justify-between"
       >
         {/* Video Player Area */}
         <div
@@ -548,14 +548,14 @@ export const ReelsPage: React.FC = () => {
             />
           ) : (
             /* Video unavailable fallback card */
-            <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-[#101116] text-[#858995]">
-              <div className="w-12 h-12 rounded-full bg-[#1B1D24] border border-[#292B34] flex items-center justify-center text-[#FF7479] mb-3">
+            <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-surface text-secondary">
+              <div className="w-12 h-12 rounded-full bg-surface-secondary border border-theme flex items-center justify-center text-[#FF304F] mb-3">
                 <AlertTriangle className="w-6 h-6" />
               </div>
-              <span className="text-sm font-semibold text-[#F5F5F7] mb-1">
+              <span className="text-sm font-semibold text-primary mb-1">
                 Video unavailable
               </span>
-              <span className="text-xs text-[#858995] max-w-xs mb-4">
+              <span className="text-xs text-muted max-w-xs mb-4">
                 This media file could not be played or is temporarily inaccessible.
               </span>
               <button
@@ -567,7 +567,7 @@ export const ReelsPage: React.FC = () => {
                     videoRef.current.load();
                   }
                 }}
-                className="px-3.5 py-1.5 rounded-[8px] bg-[#1B1D24] hover:bg-[#282A32] text-xs font-medium text-white border border-[#292B34] transition-colors"
+                className="px-3.5 py-1.5 rounded-[8px] bg-surface-secondary hover:bg-surface-tertiary text-xs font-medium text-primary border border-theme transition-colors"
               >
                 Reload Video
               </button>
@@ -589,7 +589,7 @@ export const ReelsPage: React.FC = () => {
           <div className="flex items-center gap-2">
             <span className="text-sm font-bold text-white tracking-wide flex items-center gap-1.5">
               Reels
-              <span className="w-1.5 h-1.5 rounded-full bg-[#E5484D]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#FF304F]" />
             </span>
             {reels.length > 1 && (
               <span className="text-[11px] font-semibold text-white/60 bg-black/40 px-2 py-0.5 rounded-full border border-white/10">
@@ -618,7 +618,7 @@ export const ReelsPage: React.FC = () => {
             <div className="p-2.5 rounded-full bg-black/50 backdrop-blur-xs hover:bg-black/70 transition-colors">
               <Heart
                 className={`w-6 h-6 transition-colors ${
-                  isLiked ? 'fill-[#E5484D] text-[#E5484D]' : 'text-white'
+                  isLiked ? 'fill-[#FF304F] text-[#FF304F]' : 'text-white'
                 }`}
               />
             </div>
@@ -646,10 +646,10 @@ export const ReelsPage: React.FC = () => {
             aria-label="Request Learning Materials"
             className="flex flex-col items-center gap-1 active:scale-90 transition-transform cursor-pointer"
           >
-            <div className="p-2.5 rounded-full bg-[#E5484D] text-white shadow-lg shadow-[#E5484D]/30 hover:bg-[#D7373F] transition-colors">
+            <div className="p-2.5 rounded-full bg-[#FF304F] text-white shadow-lg shadow-[#FF304F]/30 hover:bg-[#E5203F] transition-colors">
               <GraduationCap className="w-6 h-6" />
             </div>
-            <span className="text-[10px] font-bold text-[#E5484D] bg-black/70 px-1 rounded drop-shadow">
+            <span className="text-[10px] font-bold text-[#FF304F] bg-black/70 px-1 rounded drop-shadow">
               Materials
             </span>
           </button>
@@ -701,8 +701,8 @@ export const ReelsPage: React.FC = () => {
                 onClick={handleFollow}
                 className={`text-xs font-semibold px-2.5 py-0.5 rounded-[6px] transition-colors cursor-pointer ${
                   isAuthorFollowing
-                    ? 'bg-white/20 text-white/90 hover:bg-[#32191D] hover:text-[#FF6269] hover:border-[#E5484D] border border-transparent'
-                    : 'bg-[#E5484D] hover:bg-[#D7373F] text-white shadow-xs'
+                    ? 'bg-white/20 text-white/90 hover:bg-[#FF304F]/20 hover:text-[#FF6269] hover:border-[#FF304F] border border-transparent'
+                    : 'bg-[#FF304F] hover:bg-[#E5203F] text-white shadow-xs'
                 }`}
               >
                 {isAuthorFollowing ? 'Following' : 'Follow'}
@@ -719,7 +719,7 @@ export const ReelsPage: React.FC = () => {
 
           {/* Educational Note (if attached) */}
           {currentReel.educational_description && (
-            <p className="text-[11px] text-[#B0B3BD] line-clamp-2 bg-black/40 backdrop-blur-xs px-2 py-1 rounded-[6px] border border-white/5">
+            <p className="text-[11px] text-white/80 line-clamp-2 bg-black/40 backdrop-blur-xs px-2 py-1 rounded-[6px] border border-white/5">
               💡 {currentReel.educational_description}
             </p>
           )}
@@ -730,7 +730,7 @@ export const ReelsPage: React.FC = () => {
               {currentReel.skill_tags.map((tag) => (
                 <span
                   key={tag}
-                  className="text-[11px] font-semibold text-[#FF7479] drop-shadow"
+                  className="text-[11px] font-semibold text-[#FF304F] drop-shadow"
                 >
                   {tag.startsWith('#') ? tag : `#${tag}`}
                 </span>
@@ -746,7 +746,7 @@ export const ReelsPage: React.FC = () => {
             disabled={currentIndex === 0}
             title="Previous Reel (Up Arrow)"
             aria-label="Previous Reel"
-            className="p-2.5 rounded-full bg-[#15161B] border border-[#292B34] text-white hover:bg-[#1B1D24] disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer shadow-lg"
+            className="p-2.5 rounded-full bg-surface border border-theme text-primary hover:bg-surface-secondary disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer shadow-lg"
           >
             <ChevronUp className="w-5 h-5" />
           </button>
@@ -755,7 +755,7 @@ export const ReelsPage: React.FC = () => {
             disabled={currentIndex === reels.length - 1}
             title="Next Reel (Down Arrow)"
             aria-label="Next Reel"
-            className="p-2.5 rounded-full bg-[#15161B] border border-[#292B34] text-white hover:bg-[#1B1D24] disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer shadow-lg"
+            className="p-2.5 rounded-full bg-surface border border-theme text-primary hover:bg-surface-secondary disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer shadow-lg"
           >
             <ChevronDown className="w-5 h-5" />
           </button>

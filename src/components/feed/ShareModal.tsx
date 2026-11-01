@@ -28,20 +28,20 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, post })
   return (
     <Dialog isOpen={isOpen} onClose={onClose} title="Share Post" maxWidth="sm">
       <div className="flex flex-col gap-4 py-2">
-        <p className="text-xs text-[#B0B3BD] leading-relaxed">
+        <p className="text-xs text-secondary leading-relaxed">
           Share this skill tutorial with your friends or study groups:
         </p>
 
-        <div className="flex items-center gap-2 p-2 rounded-[10px] bg-[#1B1D24] border border-[#292B34]">
+        <div className="flex items-center gap-2 p-2 rounded-[10px] bg-surface-secondary border border-theme">
           <input
             type="text"
             readOnly
             value={postUrl}
-            className="flex-1 bg-transparent text-xs text-[#F5F5F7] focus:outline-none select-all truncate"
+            className="flex-1 bg-transparent text-xs text-primary focus:outline-none select-all truncate"
           />
           <button
             onClick={handleCopy}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-[8px] bg-[#E5484D] hover:bg-[#D7373F] text-white text-xs font-semibold transition-colors shrink-0"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-[8px] bg-[#FF304F] hover:bg-[#E5203F] text-white text-xs font-semibold transition-colors shrink-0"
           >
             {copied ? (
               <>

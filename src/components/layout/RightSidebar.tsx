@@ -138,12 +138,12 @@ export const RightSidebar: React.FC = () => {
   };
 
   return (
-    <aside className="hidden xl:flex flex-col w-80 h-screen sticky top-0 px-6 py-8 overflow-y-auto shrink-0 select-none border-l border-[#292B34]/40">
+    <aside className="hidden xl:flex flex-col w-80 h-screen sticky top-0 px-6 py-8 overflow-y-auto shrink-0 select-none border-l border-theme">
       {/* Current User Card */}
       {profile && (
         <div
           onClick={() => navigate(`/u/${profile.username}`)}
-          className="flex items-center justify-between p-3 rounded-[14px] bg-[#15161B]/50 border border-[#292B34]/60 hover:border-[#393C47] transition-all cursor-pointer mb-6 group"
+          className="flex items-center justify-between p-3 rounded-[14px] bg-surface border border-theme hover:border-theme-strong transition-all cursor-pointer mb-6 group shadow-xs"
         >
           <div className="flex items-center gap-3 overflow-hidden">
             <Avatar
@@ -152,34 +152,34 @@ export const RightSidebar: React.FC = () => {
               size="md"
             />
             <div className="flex flex-col min-w-0">
-              <span className="text-sm font-semibold text-[#F5F5F7] truncate">
+              <span className="text-sm font-semibold text-primary truncate">
                 {profile.display_name || profile.full_name || profile.username}
               </span>
-              <span className="text-xs text-[#858995] truncate">@{profile.username}</span>
+              <span className="text-xs text-muted truncate">@{profile.username}</span>
             </div>
           </div>
-          <span className="text-[11px] font-semibold text-[#858995] group-hover:text-[#F5F5F7] shrink-0 ml-2">
+          <span className="text-[11px] font-semibold text-muted group-hover:text-primary shrink-0 ml-2">
             Profile
           </span>
         </div>
       )}
 
       {/* Differentiator Callout Card */}
-      <div className="p-4 rounded-[16px] bg-gradient-to-br from-[#15161B] to-[#1B1D24] border border-[#292B34] mb-6 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-24 h-24 bg-[#E5484D]/5 rounded-full blur-xl pointer-events-none" />
-        <div className="flex items-center gap-2 text-xs font-bold text-[#E5484D] uppercase tracking-wider mb-1.5">
+      <div className="p-4 rounded-[16px] bg-surface border border-theme mb-6 relative overflow-hidden shadow-xs">
+        <div className="absolute top-0 right-0 w-24 h-24 bg-[#FF304F]/5 rounded-full blur-xl pointer-events-none" />
+        <div className="flex items-center gap-2 text-xs font-bold text-[#FF304F] uppercase tracking-wider mb-1.5">
           <Sparkles className="w-3.5 h-3.5" />
           <span>Peer Learning</span>
         </div>
-        <h4 className="text-sm font-semibold text-[#F5F5F7] mb-1">
+        <h4 className="text-sm font-semibold text-primary mb-1">
           Zero-Cost Skill Sharing
         </h4>
-        <p className="text-xs text-[#B0B3BD] leading-relaxed mb-3">
+        <p className="text-xs text-secondary leading-relaxed mb-3">
           Request source files, guides, and notes directly from creators. No paywalls, ever.
         </p>
         <button
           onClick={() => navigate('/learn')}
-          className="w-full flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-[8px] bg-[#E5484D]/10 hover:bg-[#E5484D]/20 text-[#E5484D] text-xs font-semibold border border-[#E5484D]/30 transition-colors"
+          className="w-full flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-[8px] bg-[#FF304F]/10 hover:bg-[#FF304F]/20 text-[#FF304F] text-xs font-semibold border border-[#FF304F]/30 transition-colors cursor-pointer"
         >
           <BookOpen className="w-3.5 h-3.5" />
           <span>Explore Learning Hub</span>
@@ -190,12 +190,12 @@ export const RightSidebar: React.FC = () => {
       {/* Suggested Creators */}
       <div className="mb-6">
         <div className="flex items-center justify-between mb-3">
-          <span className="text-xs font-bold text-[#858995] uppercase tracking-wider">
+          <span className="text-xs font-bold text-muted uppercase tracking-wider">
             Suggested Creators
           </span>
           <button
             onClick={() => navigate('/explore')}
-            className="text-xs font-medium text-[#B0B3BD] hover:text-[#F5F5F7]"
+            className="text-xs font-medium text-secondary hover:text-primary cursor-pointer"
           >
             See All
           </button>
@@ -206,10 +206,10 @@ export const RightSidebar: React.FC = () => {
             <div className="space-y-2 py-1">
               {[1, 2, 3].map((n) => (
                 <div key={n} className="flex items-center gap-2.5 animate-pulse">
-                  <div className="w-8 h-8 rounded-full bg-[#1B1D24]" />
+                  <div className="w-8 h-8 rounded-full bg-surface-secondary" />
                   <div className="flex-1 space-y-1">
-                    <div className="h-3 w-20 bg-[#1B1D24] rounded" />
-                    <div className="h-2 w-14 bg-[#15161B] rounded" />
+                    <div className="h-3 w-20 bg-surface-secondary rounded" />
+                    <div className="h-2 w-14 bg-surface-tertiary rounded" />
                   </div>
                 </div>
               ))}
@@ -232,10 +232,10 @@ export const RightSidebar: React.FC = () => {
                       size="sm"
                     />
                     <div className="flex flex-col min-w-0">
-                      <span className="text-xs font-semibold text-[#F5F5F7] group-hover:text-white truncate">
+                      <span className="text-xs font-semibold text-primary truncate">
                         {creator.display_name || creator.full_name || creator.username}
                       </span>
-                      <span className="text-[11px] text-[#858995] truncate">
+                      <span className="text-[11px] text-muted truncate">
                         @{creator.username}
                       </span>
                     </div>
@@ -243,10 +243,10 @@ export const RightSidebar: React.FC = () => {
 
                   <button
                     onClick={() => toggleFollow(creator.id)}
-                    className={`text-xs font-semibold px-3 py-1 rounded-[8px] transition-all shrink-0 ${
+                    className={`text-xs font-semibold px-3 py-1 rounded-[8px] transition-all shrink-0 cursor-pointer ${
                       isFollowing
-                        ? 'bg-[#1B1D24] text-[#B0B3BD] hover:bg-[#282A32] border border-[#292B34]'
-                        : 'bg-[#E5484D] hover:bg-[#D7373F] text-white shadow-xs'
+                        ? 'bg-surface-secondary text-secondary hover:bg-surface-hover border border-theme'
+                        : 'bg-[#FF304F] hover:bg-[#E52543] text-white shadow-xs'
                     }`}
                   >
                     {isFollowing ? 'Following' : 'Follow'}
@@ -255,7 +255,7 @@ export const RightSidebar: React.FC = () => {
               );
             })
           ) : (
-            <p className="text-xs text-[#858995] py-1">No suggestions available right now.</p>
+            <p className="text-xs text-muted py-1">No suggestions available right now.</p>
           )}
         </div>
       </div>
@@ -263,7 +263,7 @@ export const RightSidebar: React.FC = () => {
       {/* Available Skill Categories */}
       {skillCategories.length > 0 && (
         <div className="mb-6">
-          <span className="text-xs font-bold text-[#858995] uppercase tracking-wider block mb-3">
+          <span className="text-xs font-bold text-muted uppercase tracking-wider block mb-3">
             Skill Categories
           </span>
           <div className="flex flex-wrap gap-1.5">
@@ -271,7 +271,7 @@ export const RightSidebar: React.FC = () => {
               <button
                 key={skill}
                 onClick={() => navigate(`/communities?search=${encodeURIComponent(skill)}`)}
-                className="text-xs px-2.5 py-1 rounded-[8px] bg-[#15161B] hover:bg-[#1B1D24] text-[#B0B3BD] hover:text-[#F5F5F7] border border-[#292B34] transition-colors"
+                className="text-xs px-2.5 py-1 rounded-[8px] bg-surface hover:bg-surface-secondary text-secondary hover:text-primary border border-theme transition-colors cursor-pointer"
               >
                 #{skill}
               </button>
@@ -281,17 +281,16 @@ export const RightSidebar: React.FC = () => {
       )}
 
       {/* Footer Info with Valid Working Routes */}
-      <div className="mt-auto pt-6 text-[11px] text-[#858995]/80 space-y-2 border-t border-[#292B34]/40">
+      <div className="mt-auto pt-6 text-[11px] text-muted border-t border-theme">
         <div className="flex flex-wrap gap-x-2 gap-y-1">
-          <button onClick={() => navigate('/learn')} className="hover:underline hover:text-[#F5F5F7]">Learn</button>
+          <button onClick={() => navigate('/learn')} className="hover:underline hover:text-primary cursor-pointer">Learn</button>
           <span>•</span>
-          <button onClick={() => navigate('/communities')} className="hover:underline hover:text-[#F5F5F7]">Communities</button>
+          <button onClick={() => navigate('/communities')} className="hover:underline hover:text-primary cursor-pointer">Communities</button>
           <span>•</span>
-          <button onClick={() => navigate('/explore')} className="hover:underline hover:text-[#F5F5F7]">Explore</button>
+          <button onClick={() => navigate('/explore')} className="hover:underline hover:text-primary cursor-pointer">Explore</button>
           <span>•</span>
-          <button onClick={() => navigate('/settings')} className="hover:underline hover:text-[#F5F5F7]">Settings</button>
+          <button onClick={() => navigate('/settings')} className="hover:underline hover:text-primary cursor-pointer">Settings</button>
         </div>
-        <p>© 2026 UPMIND — Learn. Create. Connect.</p>
       </div>
     </aside>
   );

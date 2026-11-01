@@ -132,12 +132,12 @@ export const LearningRequestModal: React.FC<LearningRequestModalProps> = ({
           <div className="w-14 h-14 rounded-full bg-[#35B883]/15 text-[#35B883] flex items-center justify-center">
             <CheckCircle2 className="w-8 h-8" />
           </div>
-          <h3 className="text-base font-bold text-[#F5F5F7]">
+          <h3 className="text-base font-bold text-primary">
             Request Sent to @{post.author?.username}!
           </h3>
-          <p className="text-xs text-[#B0B3BD] max-w-sm leading-relaxed">
+          <p className="text-xs text-secondary max-w-sm leading-relaxed">
             The creator will review your request. Once approved, the learning notes, files, or links will appear in your{' '}
-            <span className="text-[#E5484D] font-semibold">Learning Hub</span>.
+            <span className="text-[#FF304F] font-semibold">Learning Hub</span>.
           </p>
           <div className="pt-2">
             <Button variant="primary" size="md" onClick={onClose}>
@@ -148,40 +148,40 @@ export const LearningRequestModal: React.FC<LearningRequestModalProps> = ({
       ) : (
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {/* Creator & Post Summary Header */}
-          <div className="flex items-center gap-3 p-3 rounded-[12px] bg-[#1B1D24] border border-[#292B34]">
+          <div className="flex items-center gap-3 p-3 rounded-[12px] bg-surface-secondary border border-theme">
             <Avatar
               src={post.author?.avatar_url}
               name={post.author?.full_name || post.author?.username}
               size="md"
             />
             <div className="flex flex-col min-w-0">
-              <span className="text-xs font-semibold text-[#F5F5F7]">
+              <span className="text-xs font-semibold text-primary">
                 Teacher: {post.author?.display_name || post.author?.full_name || post.author?.username}
               </span>
-              <span className="text-[11px] text-[#858995] truncate">
+              <span className="text-[11px] text-secondary truncate">
                 Post: &ldquo;{post.caption}&rdquo;
               </span>
             </div>
           </div>
 
           {/* Differentiator Banner */}
-          <div className="flex items-start gap-2.5 p-3 rounded-[12px] bg-[#E5484D]/10 border border-[#E5484D]/30">
-            <Sparkles className="w-4 h-4 text-[#E5484D] shrink-0 mt-0.5" />
-            <div className="text-xs text-[#B0B3BD] leading-relaxed">
-              <strong className="text-white">100% Free Peer Learning:</strong> Creators share source code, design templates, practice notes, and tutorials directly with learners.
+          <div className="flex items-start gap-2.5 p-3 rounded-[12px] bg-[#FF304F]/10 border border-[#FF304F]/30">
+            <Sparkles className="w-4 h-4 text-[#FF304F] shrink-0 mt-0.5" />
+            <div className="text-xs text-secondary leading-relaxed">
+              <strong className="text-primary">100% Free Peer Learning:</strong> Creators share source code, design templates, practice notes, and tutorials directly with learners.
             </div>
           </div>
 
           {/* Skill Selector */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-[#B0B3BD] flex items-center gap-1">
-              <GraduationCap className="w-3.5 h-3.5 text-[#E5484D]" />
+            <label className="text-xs font-medium text-secondary flex items-center gap-1">
+              <GraduationCap className="w-3.5 h-3.5 text-[#FF304F]" />
               Skill Domain
             </label>
             <select
               value={selectedSkillId}
               onChange={(e) => setSelectedSkillId(e.target.value)}
-              className="w-full bg-[#15161B] text-[#F5F5F7] text-xs rounded-[10px] border border-[#292B34] p-2.5 focus:border-[#FF7479] focus:outline-none"
+              className="w-full bg-surface text-primary text-xs rounded-[10px] border border-theme p-2.5 focus:border-[#FF304F] focus:outline-none"
             >
               {skillsList.map((skill) => (
                 <option key={skill.id} value={skill.id}>
@@ -193,7 +193,7 @@ export const LearningRequestModal: React.FC<LearningRequestModalProps> = ({
 
           {/* Message Input */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-[#B0B3BD]">
+            <label className="text-xs font-medium text-secondary">
               Message to Creator (Optional note)
             </label>
             <textarea
@@ -201,14 +201,14 @@ export const LearningRequestModal: React.FC<LearningRequestModalProps> = ({
               onChange={(e) => setMessage(e.target.value)}
               rows={3}
               placeholder="Explain what you want to practice or any specific questions..."
-              className="w-full bg-[#15161B] text-[#F5F5F7] placeholder-[#858995] text-xs rounded-[10px] border border-[#292B34] p-2.5 focus:border-[#FF7479] focus:outline-none"
+              className="w-full bg-surface text-primary placeholder-[#9297A2] text-xs rounded-[10px] border border-theme p-2.5 focus:border-[#FF304F] focus:outline-none"
             />
           </div>
 
           {error && <span className="text-xs text-[#FF6269]">{error}</span>}
 
           {/* Actions */}
-          <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#292B34]/60">
+          <div className="flex items-center justify-end gap-2 pt-2 border-t border-theme">
             <Button type="button" variant="ghost" size="sm" onClick={onClose}>
               Cancel
             </Button>

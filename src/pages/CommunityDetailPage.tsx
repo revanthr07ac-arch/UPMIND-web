@@ -323,8 +323,8 @@ export const CommunityDetailPage: React.FC = () => {
     return (
       <div className="w-full flex items-center justify-center py-24 select-none">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-9 h-9 border-2 border-[#E5484D] border-t-transparent rounded-full animate-spin" />
-          <span className="text-xs font-semibold text-[#858995] tracking-wider uppercase">
+          <div className="w-9 h-9 border-2 border-[#FF304F] border-t-transparent rounded-full animate-spin" />
+          <span className="text-xs font-semibold text-muted tracking-wider uppercase">
             Loading Community...
           </span>
         </div>
@@ -335,12 +335,12 @@ export const CommunityDetailPage: React.FC = () => {
   // 2. Not Found State
   if (isNotFound || !community) {
     return (
-      <div className="w-full max-w-md mx-auto py-16 text-center flex flex-col items-center bg-[#15161B] border border-[#292B34] rounded-[24px] p-8 shadow-xl">
-        <div className="w-16 h-16 rounded-full bg-[#1B1D24] border border-[#292B34] flex items-center justify-center text-[#858995] mb-4">
+      <div className="w-full max-w-md mx-auto py-16 text-center flex flex-col items-center bg-surface border border-theme rounded-[24px] p-8 shadow-xl">
+        <div className="w-16 h-16 rounded-full bg-surface-secondary border border-theme flex items-center justify-center text-muted mb-4">
           <Users className="w-8 h-8" />
         </div>
-        <h2 className="text-xl font-bold text-[#F5F5F7] mb-2">Community Not Found</h2>
-        <p className="text-xs text-[#858995] mb-6 max-w-sm leading-relaxed">
+        <h2 className="text-xl font-bold text-primary mb-2">Community Not Found</h2>
+        <p className="text-xs text-secondary mb-6 max-w-sm leading-relaxed">
           The skill community you are looking for does not exist or may have been removed.
         </p>
         <Button
@@ -358,15 +358,15 @@ export const CommunityDetailPage: React.FC = () => {
   // 3. Error State
   if (error) {
     return (
-      <div className="w-full max-w-md mx-auto py-16 text-center flex flex-col items-center bg-[#15161B] border border-[#292B34] rounded-[24px] p-8 shadow-xl">
-        <div className="w-14 h-14 rounded-full bg-[#32191D] border border-[#E5484D]/30 flex items-center justify-center text-[#FF6269] mb-4">
+      <div className="w-full max-w-md mx-auto py-16 text-center flex flex-col items-center bg-surface border border-theme rounded-[24px] p-8 shadow-xl">
+        <div className="w-14 h-14 rounded-full bg-[#FF304F]/10 border border-[#FF304F]/30 flex items-center justify-center text-[#FF304F] mb-4">
           <AlertCircle className="w-7 h-7" />
         </div>
-        <h2 className="text-lg font-bold text-[#F5F5F7] mb-2">Unable to load community</h2>
-        <p className="text-xs text-[#858995] mb-6 max-w-sm leading-relaxed">{error}</p>
+        <h2 className="text-lg font-bold text-primary mb-2">Unable to load community</h2>
+        <p className="text-xs text-secondary mb-6 max-w-sm leading-relaxed">{error}</p>
         <button
           onClick={() => loadCommunity()}
-          className="inline-flex items-center gap-2 bg-[#E5484D] hover:bg-[#D7373F] text-white text-xs font-semibold px-5 py-2.5 rounded-[12px] transition-colors cursor-pointer"
+          className="inline-flex items-center gap-2 bg-[#FF304F] hover:bg-[#E5203F] text-white text-xs font-semibold px-5 py-2.5 rounded-[12px] transition-colors cursor-pointer"
         >
           <RotateCcw className="w-3.5 h-3.5" />
           <span>Try Again</span>
@@ -389,16 +389,16 @@ export const CommunityDetailPage: React.FC = () => {
       {/* Back button */}
       <button
         onClick={() => navigate('/communities')}
-        className="self-start inline-flex items-center gap-1.5 text-xs font-semibold text-[#858995] hover:text-[#F5F5F7] transition-colors cursor-pointer"
+        className="self-start inline-flex items-center gap-1.5 text-xs font-semibold text-secondary hover:text-primary transition-colors cursor-pointer"
       >
         <ArrowLeft className="w-4 h-4" />
         <span>All Communities</span>
       </button>
 
       {/* Community Header Card */}
-      <div className="w-full bg-[#15161B] border border-[#292B34] rounded-[24px] overflow-hidden shadow-2xl flex flex-col">
+      <div className="w-full bg-surface border border-theme rounded-[24px] overflow-hidden shadow-2xl flex flex-col">
         {/* Cover Banner */}
-        <div className="w-full h-36 sm:h-48 relative overflow-hidden bg-gradient-to-r from-[#1B1D24] via-[#23252D] to-[#15161B]">
+        <div className="w-full h-36 sm:h-48 relative overflow-hidden bg-gradient-to-r from-surface via-surface-secondary to-surface">
           {community.cover_url ? (
             <img
               src={community.cover_url}
@@ -407,17 +407,17 @@ export const CommunityDetailPage: React.FC = () => {
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center opacity-20">
-              <Users className="w-24 h-24 text-white" />
+              <Users className="w-24 h-24 text-primary" />
             </div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#15161B] via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-surface via-transparent to-transparent" />
         </div>
 
         {/* Community Info Body */}
         <div className="px-5 sm:px-8 pb-6 -mt-12 relative z-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div className="flex flex-col sm:flex-row sm:items-end gap-4">
             {/* Avatar */}
-            <div className="w-20 h-20 rounded-[20px] bg-[#1B1D24] border-3 border-[#15161B] shadow-xl flex items-center justify-center text-[#E5484D] font-black text-2xl shrink-0 overflow-hidden">
+            <div className="w-20 h-20 rounded-[20px] bg-surface-secondary border-3 border-surface shadow-xl flex items-center justify-center text-[#FF304F] font-black text-2xl shrink-0 overflow-hidden">
               {community.avatar_url ? (
                 <img
                   src={community.avatar_url}
@@ -431,22 +431,22 @@ export const CommunityDetailPage: React.FC = () => {
 
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
-                <h1 className="text-xl sm:text-2xl font-black text-[#F5F5F7] tracking-tight">
+                <h1 className="text-xl sm:text-2xl font-black text-primary tracking-tight">
                   {community.name}
                 </h1>
                 {isPrivate ? (
-                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#858995] bg-[#1B1D24] px-2 py-0.5 rounded-[6px] border border-[#292B34]">
-                    <Lock className="w-3 h-3 text-[#E5484D]" /> Private
+                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-muted bg-surface-secondary px-2 py-0.5 rounded-[6px] border border-theme">
+                    <Lock className="w-3 h-3 text-[#FF304F]" /> Private
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#858995] bg-[#1B1D24] px-2 py-0.5 rounded-[6px] border border-[#292B34]">
+                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-muted bg-surface-secondary px-2 py-0.5 rounded-[6px] border border-theme">
                     <Globe className="w-3 h-3 text-[#35B883]" /> Public
                   </span>
                 )}
               </div>
 
-              <div className="flex items-center gap-2 mt-1 text-xs text-[#858995]">
-                <span className="text-[#E5484D] font-semibold">{community.category}</span>
+              <div className="flex items-center gap-2 mt-1 text-xs text-muted">
+                <span className="text-[#FF304F] font-semibold">{community.category}</span>
                 <span>•</span>
                 <span>
                   {community.members_count} {community.members_count === 1 ? 'member' : 'members'}
@@ -456,7 +456,7 @@ export const CommunityDetailPage: React.FC = () => {
                     <span>•</span>
                     <span
                       onClick={() => navigate(`/u/${community.owner?.username}`)}
-                      className="hover:underline cursor-pointer text-[#B0B3BD]"
+                      className="hover:underline cursor-pointer text-secondary"
                     >
                       Created by @{community.owner.username}
                     </span>
@@ -469,23 +469,23 @@ export const CommunityDetailPage: React.FC = () => {
           {/* Action Button */}
           <div className="flex items-center gap-2.5 shrink-0">
             {isOwner ? (
-              <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-[12px] bg-[#E5484D]/10 text-[#E5484D] font-semibold text-xs border border-[#E5484D]/30">
+              <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-[12px] bg-[#FF304F]/10 text-[#FF304F] font-semibold text-xs border border-[#FF304F]/30">
                 <Shield className="w-3.5 h-3.5" /> Community Owner
               </span>
             ) : isMember ? (
               <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1 px-3 py-2 rounded-[10px] bg-[#1B1D24] text-[#35B883] font-semibold text-xs border border-[#292B34]">
+                <span className="inline-flex items-center gap-1 px-3 py-2 rounded-[10px] bg-surface-secondary text-[#35B883] font-semibold text-xs border border-theme">
                   <Check className="w-3.5 h-3.5" /> Joined
                 </span>
                 <button
                   onClick={handleLeave}
-                  className="px-3 py-2 rounded-[10px] text-xs font-semibold text-[#858995] hover:text-[#FF6269] hover:bg-[#32191D] border border-transparent hover:border-[#E5484D]/30 transition-colors cursor-pointer"
+                  className="px-3 py-2 rounded-[10px] text-xs font-semibold text-muted hover:text-[#FF6269] hover:bg-[#FF304F]/10 border border-transparent hover:border-[#FF304F]/30 transition-colors cursor-pointer"
                 >
                   Leave
                 </button>
               </div>
             ) : isPendingRequest ? (
-              <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-[12px] bg-[#1B1D24] text-[#FF7479] font-semibold text-xs border border-[#292B34]">
+              <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-[12px] bg-surface-secondary text-[#FF304F] font-semibold text-xs border border-theme">
                 <Clock className="w-3.5 h-3.5" /> Request Pending
               </span>
             ) : (
@@ -503,21 +503,21 @@ export const CommunityDetailPage: React.FC = () => {
 
         {/* Description row */}
         {community.description && (
-          <div className="px-5 sm:px-8 pb-6 border-t border-[#292B34]/60 pt-4">
-            <p className="text-xs sm:text-sm text-[#B0B3BD] leading-relaxed max-w-3xl">
+          <div className="px-5 sm:px-8 pb-6 border-t border-theme pt-4">
+            <p className="text-xs sm:text-sm text-secondary leading-relaxed max-w-3xl">
               {community.description}
             </p>
           </div>
         )}
 
         {/* Navigation Tabs */}
-        <div className="flex items-center gap-2 px-5 sm:px-8 border-t border-[#292B34] bg-[#101116]/50">
+        <div className="flex items-center gap-2 px-5 sm:px-8 border-t border-theme bg-surface-secondary/40">
           <button
             onClick={() => setActiveTab('discussions')}
             className={`py-3.5 px-3 text-xs font-bold border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
               activeTab === 'discussions'
-                ? 'border-[#E5484D] text-[#F5F5F7]'
-                : 'border-transparent text-[#858995] hover:text-[#F5F5F7]'
+                ? 'border-[#FF304F] text-primary'
+                : 'border-transparent text-secondary hover:text-primary'
             }`}
           >
             <MessageSquare className="w-4 h-4" />
@@ -528,8 +528,8 @@ export const CommunityDetailPage: React.FC = () => {
             onClick={() => setActiveTab('members')}
             className={`py-3.5 px-3 text-xs font-bold border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
               activeTab === 'members'
-                ? 'border-[#E5484D] text-[#F5F5F7]'
-                : 'border-transparent text-[#858995] hover:text-[#F5F5F7]'
+                ? 'border-[#FF304F] text-primary'
+                : 'border-transparent text-secondary hover:text-primary'
             }`}
           >
             <Users className="w-4 h-4" />
@@ -541,8 +541,8 @@ export const CommunityDetailPage: React.FC = () => {
               onClick={() => setActiveTab('settings')}
               className={`py-3.5 px-3 text-xs font-bold border-b-2 transition-all cursor-pointer flex items-center gap-2 ${
                 activeTab === 'settings'
-                  ? 'border-[#E5484D] text-[#F5F5F7]'
-                  : 'border-transparent text-[#858995] hover:text-[#F5F5F7]'
+                  ? 'border-[#FF304F] text-primary'
+                  : 'border-transparent text-secondary hover:text-primary'
               }`}
             >
               <Settings className="w-4 h-4" />
@@ -556,16 +556,16 @@ export const CommunityDetailPage: React.FC = () => {
 
       {/* Private community access restriction card */}
       {isPrivate && !isMember && (
-        <div className="w-full bg-[#15161B] border border-[#292B34] rounded-[20px] p-8 sm:p-12 text-center flex flex-col items-center shadow-xl">
-          <div className="w-14 h-14 rounded-full bg-[#32191D] border border-[#E5484D]/30 flex items-center justify-center text-[#FF6269] mb-4">
+        <div className="w-full bg-surface border border-theme rounded-[20px] p-8 sm:p-12 text-center flex flex-col items-center shadow-xl">
+          <div className="w-14 h-14 rounded-full bg-[#FF304F]/10 border border-[#FF304F]/30 flex items-center justify-center text-[#FF304F] mb-4">
             <Lock className="w-7 h-7" />
           </div>
-          <h2 className="text-lg font-bold text-[#F5F5F7] mb-2">This Community is Private</h2>
-          <p className="text-xs text-[#858995] mb-6 max-w-md leading-relaxed">
+          <h2 className="text-lg font-bold text-primary mb-2">This Community is Private</h2>
+          <p className="text-xs text-secondary mb-6 max-w-md leading-relaxed">
             Discussions and member lists are restricted to approved members. Submit a request to the community owner to join.
           </p>
           {isPendingRequest ? (
-            <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-[12px] bg-[#1B1D24] text-[#FF7479] font-semibold text-xs border border-[#292B34]">
+            <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-[12px] bg-surface-secondary text-[#FF304F] font-semibold text-xs border border-theme">
               <Clock className="w-4 h-4" /> Join Request Pending Review
             </span>
           ) : (
@@ -588,7 +588,7 @@ export const CommunityDetailPage: React.FC = () => {
           {isMember ? (
             <form
               onSubmit={handleCreatePost}
-              className="bg-[#15161B] border border-[#292B34] rounded-[18px] p-4 flex flex-col gap-3 shadow-card"
+              className="bg-surface border border-theme rounded-[18px] p-4 flex flex-col gap-3 shadow-card"
             >
               <div className="flex items-start gap-3">
                 <Avatar
@@ -602,12 +602,12 @@ export const CommunityDetailPage: React.FC = () => {
                   value={newPostContent}
                   onChange={(e) => setNewPostContent(e.target.value)}
                   placeholder="Share a skill, start a discussion, or ask a question in this community..."
-                  className="w-full bg-[#101116] text-[#F5F5F7] placeholder-[#858995] text-xs rounded-[12px] border border-[#292B34] p-3 focus:border-[#FF7479] focus:outline-none transition-colors"
+                  className="w-full bg-surface-secondary text-primary placeholder-[#9297A2] text-xs rounded-[12px] border border-theme p-3 focus:border-[#FF304F] focus:outline-none transition-colors"
                 />
               </div>
 
               <div className="flex items-center justify-between pt-1">
-                <span className="text-[11px] text-[#858995]">
+                <span className="text-[11px] text-muted">
                   Posts are visible to all community peers
                 </span>
                 <Button
@@ -622,11 +622,11 @@ export const CommunityDetailPage: React.FC = () => {
               </div>
             </form>
           ) : (
-            <div className="bg-[#15161B]/50 border border-dashed border-[#292B34] rounded-[16px] p-4 text-center text-xs text-[#858995] flex items-center justify-center gap-2">
+            <div className="bg-surface border border-dashed border-theme rounded-[16px] p-4 text-center text-xs text-muted flex items-center justify-center gap-2">
               <span>Join this community to start discussions and reply to members.</span>
               <button
                 onClick={handleJoin}
-                className="text-[#E5484D] font-semibold hover:underline cursor-pointer"
+                className="text-[#FF304F] font-semibold hover:underline cursor-pointer"
               >
                 Join Now
               </button>
@@ -635,12 +635,12 @@ export const CommunityDetailPage: React.FC = () => {
 
           {/* Posts List */}
           {posts.length === 0 ? (
-            <div className="bg-[#15161B] border border-[#292B34] rounded-[18px] p-10 text-center flex flex-col items-center">
-              <div className="w-12 h-12 rounded-full bg-[#1B1D24] border border-[#292B34] flex items-center justify-center text-[#858995] mb-3">
+            <div className="bg-surface border border-theme rounded-[18px] p-10 text-center flex flex-col items-center">
+              <div className="w-12 h-12 rounded-full bg-surface-secondary border border-theme flex items-center justify-center text-muted mb-3">
                 <MessageSquare className="w-6 h-6" />
               </div>
-              <h3 className="text-sm font-bold text-[#F5F5F7] mb-1">No discussions yet</h3>
-              <p className="text-xs text-[#858995] max-w-sm">
+              <h3 className="text-sm font-bold text-primary mb-1">No discussions yet</h3>
+              <p className="text-xs text-secondary max-w-sm">
                 Be the first to share an insight, tutorial link, or ask for peer guidance!
               </p>
             </div>
@@ -655,7 +655,7 @@ export const CommunityDetailPage: React.FC = () => {
                 return (
                   <div
                     key={post.id}
-                    className="bg-[#15161B] border border-[#292B34] rounded-[18px] p-5 flex flex-col gap-3 shadow-card"
+                    className="bg-surface border border-theme rounded-[18px] p-5 flex flex-col gap-3 shadow-card"
                   >
                     {/* Author header */}
                     <div className="flex items-center justify-between">
@@ -673,10 +673,10 @@ export const CommunityDetailPage: React.FC = () => {
                           size="sm"
                         />
                         <div className="flex flex-col">
-                          <span className="text-xs font-semibold text-[#F5F5F7] hover:underline">
+                          <span className="text-xs font-semibold text-primary hover:underline">
                             {post.author?.display_name || post.author?.full_name || post.author?.username || 'Community Member'}
                           </span>
-                          <span className="text-[10px] text-[#858995]">
+                          <span className="text-[10px] text-muted">
                             {formatTimeAgo(post.created_at)}
                           </span>
                         </div>
@@ -686,7 +686,7 @@ export const CommunityDetailPage: React.FC = () => {
                         <button
                           onClick={() => handleDeletePost(post.id)}
                           title="Delete discussion post"
-                          className="p-1.5 rounded-[8px] text-[#858995] hover:text-[#FF6269] hover:bg-[#32191D]/40 transition-colors cursor-pointer"
+                          className="p-1.5 rounded-[8px] text-muted hover:text-[#FF6269] hover:bg-[#FF304F]/10 transition-colors cursor-pointer"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -694,15 +694,15 @@ export const CommunityDetailPage: React.FC = () => {
                     </div>
 
                     {/* Content */}
-                    <p className="text-xs sm:text-sm text-[#F5F5F7] leading-relaxed whitespace-pre-line">
+                    <p className="text-xs sm:text-sm text-primary leading-relaxed whitespace-pre-line">
                       {post.content}
                     </p>
 
                     {/* Actions bar */}
-                    <div className="pt-2 border-t border-[#292B34]/60 flex items-center justify-between">
+                    <div className="pt-2 border-t border-theme flex items-center justify-between">
                       <button
                         onClick={() => toggleComments(post.id)}
-                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#858995] hover:text-[#F5F5F7] transition-colors cursor-pointer"
+                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted hover:text-primary transition-colors cursor-pointer"
                       >
                         <MessageSquare className="w-3.5 h-3.5" />
                         <span>
@@ -714,10 +714,10 @@ export const CommunityDetailPage: React.FC = () => {
 
                     {/* Threaded Comments Section */}
                     {isCommentsOpen && (
-                      <div className="pt-3 border-t border-[#292B34] flex flex-col gap-3">
+                      <div className="pt-3 border-t border-theme flex flex-col gap-3">
                         {/* Comments list */}
                         {comments.length > 0 && (
-                          <div className="flex flex-col gap-2.5 pl-3 border-l-2 border-[#292B34]">
+                          <div className="flex flex-col gap-2.5 pl-3 border-l-2 border-theme">
                             {comments.map((comm) => (
                               <div key={comm.id} className="flex flex-col gap-1">
                                 <div className="flex items-center gap-2">
@@ -732,15 +732,15 @@ export const CommunityDetailPage: React.FC = () => {
                                         navigate(`/u/${comm.author.username}`);
                                       }
                                     }}
-                                    className="text-xs font-bold text-[#F5F5F7] hover:underline cursor-pointer"
+                                    className="text-xs font-bold text-primary hover:underline cursor-pointer"
                                   >
                                     @{comm.author?.username || 'member'}
                                   </span>
-                                  <span className="text-[10px] text-[#858995]">
+                                  <span className="text-[10px] text-muted">
                                     {formatTimeAgo(comm.created_at)}
                                   </span>
                                 </div>
-                                <p className="text-xs text-[#B0B3BD] pl-6 leading-relaxed">
+                                <p className="text-xs text-secondary pl-6 leading-relaxed">
                                   {comm.content}
                                 </p>
                               </div>
@@ -765,7 +765,7 @@ export const CommunityDetailPage: React.FC = () => {
                                 }))
                               }
                               placeholder="Write a reply..."
-                              className="flex-1 bg-[#101116] text-[#F5F5F7] text-xs rounded-[10px] border border-[#292B34] px-3 py-2 focus:border-[#FF7479] focus:outline-none"
+                              className="flex-1 bg-surface-secondary text-primary text-xs rounded-[10px] border border-theme px-3 py-2 focus:border-[#FF304F] focus:outline-none"
                             />
                             <Button
                               type="submit"
@@ -777,7 +777,7 @@ export const CommunityDetailPage: React.FC = () => {
                             </Button>
                           </form>
                         ) : (
-                          <span className="text-[11px] text-[#858995]">
+                          <span className="text-[11px] text-muted">
                             Join community to reply.
                           </span>
                         )}
@@ -793,12 +793,12 @@ export const CommunityDetailPage: React.FC = () => {
 
       {/* TAB 2: Members List */}
       {activeTab === 'members' && (!isPrivate || isMember) && (
-        <div className="bg-[#15161B] border border-[#292B34] rounded-[20px] p-5 sm:p-6 shadow-card">
-          <div className="flex items-center justify-between pb-4 border-b border-[#292B34] mb-4">
-            <h2 className="text-sm font-bold text-[#F5F5F7]">
+        <div className="bg-surface border border-theme rounded-[20px] p-5 sm:p-6 shadow-card">
+          <div className="flex items-center justify-between pb-4 border-b border-theme mb-4">
+            <h2 className="text-sm font-bold text-primary">
               Community Members ({members.length})
             </h2>
-            <span className="text-xs text-[#858995]">Active peer learners</span>
+            <span className="text-xs text-muted">Active peer learners</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -810,7 +810,7 @@ export const CommunityDetailPage: React.FC = () => {
                     navigate(`/u/${mem.profile.username}`);
                   }
                 }}
-                className="flex items-center justify-between p-3 rounded-[14px] bg-[#101116] border border-[#292B34] hover:border-[#393C47] transition-colors cursor-pointer"
+                className="flex items-center justify-between p-3 rounded-[14px] bg-surface-secondary border border-theme hover:border-theme-strong transition-colors cursor-pointer"
               >
                 <div className="flex items-center gap-3">
                   <Avatar
@@ -819,10 +819,10 @@ export const CommunityDetailPage: React.FC = () => {
                     size="md"
                   />
                   <div className="flex flex-col">
-                    <span className="text-xs font-semibold text-[#F5F5F7]">
+                    <span className="text-xs font-semibold text-primary">
                       {mem.profile?.display_name || mem.profile?.full_name || mem.profile?.username || 'Peer'}
                     </span>
-                    <span className="text-[11px] text-[#858995]">
+                    <span className="text-[11px] text-muted">
                       @{mem.profile?.username || 'user'}
                     </span>
                   </div>
@@ -831,10 +831,10 @@ export const CommunityDetailPage: React.FC = () => {
                 <span
                   className={`text-[10px] font-bold px-2 py-0.5 rounded-[6px] capitalize ${
                     mem.role === 'owner'
-                      ? 'bg-[#E5484D]/20 text-[#E5484D] border border-[#E5484D]/30'
+                      ? 'bg-[#FF304F]/20 text-[#FF304F] border border-[#FF304F]/30'
                       : mem.role === 'moderator' || mem.role === 'admin'
                       ? 'bg-[#35B883]/20 text-[#35B883] border border-[#35B883]/30'
-                      : 'bg-[#1B1D24] text-[#858995]'
+                      : 'bg-surface text-muted'
                   }`}
                 >
                   {mem.role}
@@ -850,18 +850,18 @@ export const CommunityDetailPage: React.FC = () => {
         <div className="flex flex-col gap-6">
           {/* Pending Join Requests (for private communities) */}
           {isPrivate && (
-            <div className="bg-[#15161B] border border-[#292B34] rounded-[20px] p-5 sm:p-6 shadow-card">
-              <div className="pb-3 border-b border-[#292B34] mb-4">
-                <h2 className="text-sm font-bold text-[#F5F5F7]">
+            <div className="bg-surface border border-theme rounded-[20px] p-5 sm:p-6 shadow-card">
+              <div className="pb-3 border-b border-theme mb-4">
+                <h2 className="text-sm font-bold text-primary">
                   Pending Join Requests ({requests.length})
                 </h2>
-                <p className="text-xs text-[#858995]">
+                <p className="text-xs text-secondary">
                   Approve or reject prospective members requesting to enter this private community.
                 </p>
               </div>
 
               {requests.length === 0 ? (
-                <p className="text-xs text-[#858995] py-4 text-center">
+                <p className="text-xs text-secondary py-4 text-center">
                   No pending membership requests right now.
                 </p>
               ) : (
@@ -869,7 +869,7 @@ export const CommunityDetailPage: React.FC = () => {
                   {requests.map((req) => (
                     <div
                       key={req.id}
-                      className="flex items-center justify-between p-3 rounded-[12px] bg-[#101116] border border-[#292B34]"
+                      className="flex items-center justify-between p-3 rounded-[12px] bg-surface-secondary border border-theme"
                     >
                       <div className="flex items-center gap-3">
                         <Avatar
@@ -878,10 +878,10 @@ export const CommunityDetailPage: React.FC = () => {
                           size="sm"
                         />
                         <div className="flex flex-col">
-                          <span className="text-xs font-semibold text-[#F5F5F7]">
+                          <span className="text-xs font-semibold text-primary">
                             {req.profile?.full_name || req.profile?.username}
                           </span>
-                          <span className="text-[10px] text-[#858995]">
+                          <span className="text-[10px] text-muted">
                             Requested {formatTimeAgo(req.created_at)}
                           </span>
                         </div>
@@ -897,7 +897,7 @@ export const CommunityDetailPage: React.FC = () => {
                         </button>
                         <button
                           onClick={() => handleRequestResponse(req.id, req.user_id, false)}
-                          className="px-3 py-1.5 rounded-[8px] text-xs font-semibold bg-[#1B1D24] text-[#FF6269] hover:bg-[#32191D] border border-[#292B34] transition-colors flex items-center gap-1 cursor-pointer"
+                          className="px-3 py-1.5 rounded-[8px] text-xs font-semibold bg-surface text-[#FF6269] hover:bg-[#FF304F]/10 border border-theme transition-colors flex items-center gap-1 cursor-pointer"
                         >
                           <UserX className="w-3.5 h-3.5" />
                           <span>Reject</span>
@@ -911,9 +911,9 @@ export const CommunityDetailPage: React.FC = () => {
           )}
 
           {/* Edit Details Form */}
-          <div className="bg-[#15161B] border border-[#292B34] rounded-[20px] p-5 sm:p-6 shadow-card">
-            <h2 className="text-sm font-bold text-[#F5F5F7] mb-1">Community Details</h2>
-            <p className="text-xs text-[#858995] mb-4">
+          <div className="bg-surface border border-theme rounded-[20px] p-5 sm:p-6 shadow-card">
+            <h2 className="text-sm font-bold text-primary mb-1">Community Details</h2>
+            <p className="text-xs text-secondary mb-4">
               Update community name, description, and visibility.
             </p>
 
@@ -926,24 +926,24 @@ export const CommunityDetailPage: React.FC = () => {
 
             <form onSubmit={handleSaveSettings} className="flex flex-col gap-4">
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-medium text-[#B0B3BD]">Community Name</label>
+                <label className="text-xs font-medium text-secondary">Community Name</label>
                 <input
                   type="text"
                   required
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
-                  className="w-full bg-[#101116] text-[#F5F5F7] text-xs rounded-[10px] border border-[#292B34] p-2.5 focus:border-[#FF7479] focus:outline-none"
+                  className="w-full bg-surface-secondary text-primary placeholder-[#9297A2] text-xs rounded-[10px] border border-theme p-2.5 focus:border-[#FF304F] focus:outline-none"
                 />
               </div>
 
               <div className="flex flex-col gap-1">
-                <label className="text-xs font-medium text-[#B0B3BD]">Description</label>
+                <label className="text-xs font-medium text-secondary">Description</label>
                 <textarea
                   rows={3}
                   required
                   value={editDescription}
                   onChange={(e) => setEditDescription(e.target.value)}
-                  className="w-full bg-[#101116] text-[#F5F5F7] text-xs rounded-[10px] border border-[#292B34] p-2.5 focus:border-[#FF7479] focus:outline-none"
+                  className="w-full bg-surface-secondary text-primary placeholder-[#9297A2] text-xs rounded-[10px] border border-theme p-2.5 focus:border-[#FF304F] focus:outline-none"
                 />
               </div>
 
@@ -962,9 +962,9 @@ export const CommunityDetailPage: React.FC = () => {
 
           {/* Danger Zone: Delete Community (Owner only) */}
           {isOwner && (
-            <div className="bg-[#15161B] border border-[#E5484D]/40 rounded-[20px] p-5 sm:p-6 shadow-card">
+            <div className="bg-surface border border-[#FF304F]/40 rounded-[20px] p-5 sm:p-6 shadow-card">
               <h2 className="text-sm font-bold text-[#FF6269] mb-1">Danger Zone</h2>
-              <p className="text-xs text-[#858995] mb-4 leading-relaxed">
+              <p className="text-xs text-secondary mb-4 leading-relaxed">
                 Permanently delete this community, discussions, and member associations. This action cannot be undone.
               </p>
               <Button

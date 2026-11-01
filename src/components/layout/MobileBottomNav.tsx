@@ -12,12 +12,12 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ onOpenCreateMo
   const { profile } = useAuth();
 
   return (
-    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0B0C0F]/95 backdrop-blur-md border-t border-[#292B34] px-4 py-2 flex items-center justify-around select-none">
+    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-app/95 backdrop-blur-md border-t border-theme px-4 py-2 flex items-center justify-around select-none">
       <NavLink
         to="/"
         className={({ isActive }) =>
           `p-2.5 rounded-[12px] flex flex-col items-center gap-1 transition-colors ${
-            isActive ? 'text-[#E5484D]' : 'text-[#858995] hover:text-[#F5F5F7]'
+            isActive ? 'text-[#FF304F]' : 'text-muted hover:text-primary'
           }`
         }
       >
@@ -28,7 +28,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ onOpenCreateMo
         to="/explore"
         className={({ isActive }) =>
           `p-2.5 rounded-[12px] flex flex-col items-center gap-1 transition-colors ${
-            isActive ? 'text-[#E5484D]' : 'text-[#858995] hover:text-[#F5F5F7]'
+            isActive ? 'text-[#FF304F]' : 'text-muted hover:text-primary'
           }`
         }
       >
@@ -39,7 +39,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ onOpenCreateMo
       <button
         onClick={onOpenCreateModal}
         aria-label="Create Post"
-        className="p-2.5 text-[#E5484D] hover:text-[#FF7479] active:scale-90 transition-transform"
+        className="p-2.5 text-[#FF304F] hover:text-[#FF7479] active:scale-90 transition-transform cursor-pointer"
       >
         <PlusSquare className="w-6 h-6" />
       </button>
@@ -48,7 +48,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ onOpenCreateMo
         to="/reels"
         className={({ isActive }) =>
           `p-2.5 rounded-[12px] flex flex-col items-center gap-1 transition-colors ${
-            isActive ? 'text-[#E5484D]' : 'text-[#858995] hover:text-[#F5F5F7]'
+            isActive ? 'text-[#FF304F]' : 'text-muted hover:text-primary'
           }`
         }
       >
@@ -59,7 +59,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ onOpenCreateMo
         to={profile?.username ? `/u/${profile.username}` : '/login'}
         className={({ isActive }) =>
           `p-2 rounded-full border-2 transition-all ${
-            isActive ? 'border-[#E5484D]' : 'border-transparent'
+            isActive ? 'border-[#FF304F]' : 'border-transparent'
           }`
         }
       >

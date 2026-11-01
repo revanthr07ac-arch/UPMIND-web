@@ -193,16 +193,16 @@ export const CommunitiesPage: React.FC = () => {
   return (
     <div className="w-full flex flex-col gap-6 select-none">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#292B34]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-theme">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-[12px] bg-[#15161B] border border-[#292B34] flex items-center justify-center text-[#E5484D] shadow-sm shrink-0">
+          <div className="w-10 h-10 rounded-[12px] bg-surface border border-theme flex items-center justify-center text-[#FF304F] shadow-sm shrink-0">
             <Users className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="text-xl sm:text-2xl font-black tracking-tight text-[#F5F5F7]">
+            <h1 className="text-xl sm:text-2xl font-black tracking-tight text-primary">
               Communities
             </h1>
-            <p className="text-xs sm:text-sm text-[#858995] leading-relaxed">
+            <p className="text-xs sm:text-sm text-secondary leading-relaxed">
               Join communities to learn together, ask questions, share resources, and collaborate on projects.
             </p>
           </div>
@@ -230,18 +230,18 @@ export const CommunitiesPage: React.FC = () => {
         {/* Search input & Sort dropdown */}
         <div className="flex flex-col sm:flex-row items-center gap-2.5">
           <div className="relative flex-1 w-full">
-            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#858995]" />
+            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" />
             <input
               type="text"
               value={search}
               onChange={handleSearchChange}
               placeholder="Search communities by name, skill, or topic..."
-              className="w-full bg-[#15161B] text-[#F5F5F7] placeholder-[#858995] text-xs rounded-[12px] border border-[#292B34] pl-9.5 pr-8 py-2.5 focus:border-[#FF7479] focus:outline-none transition-colors"
+              className="w-full bg-surface text-primary placeholder-[#9297A2] text-xs rounded-[12px] border border-theme pl-9.5 pr-8 py-2.5 focus:border-[#FF304F] focus:outline-none transition-colors"
             />
             {search && (
               <button
                 onClick={() => setSearch('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#858995] hover:text-[#F5F5F7]"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-primary"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -253,7 +253,7 @@ export const CommunitiesPage: React.FC = () => {
             <select
               value={selectedSort}
               onChange={(e) => setSelectedSort(e.target.value as any)}
-              className="w-full sm:w-auto bg-[#15161B] text-[#F5F5F7] text-xs rounded-[12px] border border-[#292B34] px-3 py-2.5 focus:border-[#FF7479] focus:outline-none cursor-pointer"
+              className="w-full sm:w-auto bg-surface text-primary text-xs rounded-[12px] border border-theme px-3 py-2.5 focus:border-[#FF304F] focus:outline-none cursor-pointer"
             >
               <option value="members">Sort: Most Members</option>
               <option value="recent">Sort: Recently Created</option>
@@ -265,13 +265,13 @@ export const CommunitiesPage: React.FC = () => {
         {/* Tab Filters (All, My Communities, Discover) & Categories */}
         <div className="flex flex-wrap items-center justify-between gap-2.5 pt-1">
           {/* Main Tabs */}
-          <div className="flex items-center gap-1.5 p-1 bg-[#15161B] rounded-[10px] border border-[#292B34] shrink-0">
+          <div className="flex items-center gap-1.5 p-1 bg-surface-secondary rounded-[10px] border border-theme shrink-0">
             <button
               onClick={() => setActiveTab('all')}
               className={`px-3 py-1.5 rounded-[7px] text-xs font-semibold transition-colors ${
                 activeTab === 'all'
-                  ? 'bg-[#E5484D] text-white shadow-xs'
-                  : 'text-[#B0B3BD] hover:text-white'
+                  ? 'bg-[#FF304F] text-white shadow-xs'
+                  : 'text-secondary hover:text-primary'
               }`}
             >
               All Communities
@@ -286,8 +286,8 @@ export const CommunitiesPage: React.FC = () => {
               }}
               className={`px-3 py-1.5 rounded-[7px] text-xs font-semibold transition-colors ${
                 activeTab === 'my'
-                  ? 'bg-[#E5484D] text-white shadow-xs'
-                  : 'text-[#B0B3BD] hover:text-white'
+                  ? 'bg-[#FF304F] text-white shadow-xs'
+                  : 'text-secondary hover:text-primary'
               }`}
             >
               My Communities
@@ -296,8 +296,8 @@ export const CommunitiesPage: React.FC = () => {
               onClick={() => setActiveTab('discover')}
               className={`px-3 py-1.5 rounded-[7px] text-xs font-semibold transition-colors ${
                 activeTab === 'discover'
-                  ? 'bg-[#E5484D] text-white shadow-xs'
-                  : 'text-[#B0B3BD] hover:text-white'
+                  ? 'bg-[#FF304F] text-white shadow-xs'
+                  : 'text-secondary hover:text-primary'
               }`}
             >
               Discover
@@ -309,7 +309,7 @@ export const CommunitiesPage: React.FC = () => {
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="bg-[#15161B] text-[#B0B3BD] hover:text-white text-xs rounded-[8px] border border-[#292B34] px-2.5 py-1.5 focus:border-[#FF7479] focus:outline-none cursor-pointer"
+              className="bg-surface text-secondary hover:text-primary text-xs rounded-[8px] border border-theme px-2.5 py-1.5 focus:border-[#FF304F] focus:outline-none cursor-pointer"
             >
               {categories.map((cat) => (
                 <option key={cat} value={cat}>
@@ -327,19 +327,19 @@ export const CommunitiesPage: React.FC = () => {
           {[1, 2, 3, 4, 5, 6].map((idx) => (
             <div
               key={idx}
-              className="bg-[#15161B] border border-[#292B34] rounded-[16px] p-5 flex flex-col justify-between gap-4 animate-pulse"
+              className="bg-surface border border-theme rounded-[16px] p-5 flex flex-col justify-between gap-4 animate-pulse"
             >
               <div className="flex items-start gap-3.5">
-                <div className="w-12 h-12 rounded-[12px] bg-[#23252D] shrink-0" />
+                <div className="w-12 h-12 rounded-[12px] bg-surface-secondary shrink-0" />
                 <div className="flex-1 space-y-2">
-                  <div className="w-3/4 h-3.5 bg-[#23252D] rounded" />
-                  <div className="w-1/2 h-2.5 bg-[#1B1D24] rounded" />
-                  <div className="w-full h-8 bg-[#1B1D24] rounded mt-2" />
+                  <div className="w-3/4 h-3.5 bg-surface-secondary rounded" />
+                  <div className="w-1/2 h-2.5 bg-surface-tertiary rounded" />
+                  <div className="w-full h-8 bg-surface-tertiary rounded mt-2" />
                 </div>
               </div>
-              <div className="pt-3 border-t border-[#292B34]/60 flex justify-between items-center">
-                <div className="w-20 h-2 bg-[#23252D] rounded" />
-                <div className="w-24 h-7 bg-[#23252D] rounded-[8px]" />
+              <div className="pt-3 border-t border-theme flex justify-between items-center">
+                <div className="w-20 h-2 bg-surface-secondary rounded" />
+                <div className="w-24 h-7 bg-surface-secondary rounded-[8px]" />
               </div>
             </div>
           ))}
@@ -348,21 +348,21 @@ export const CommunitiesPage: React.FC = () => {
 
       {/* Error State */}
       {!isLoading && error && (
-        <div className="w-full max-w-md mx-auto py-12 text-center flex flex-col items-center bg-[#15161B] border border-[#292B34] rounded-[20px] p-8 shadow-xl">
-          <div className="w-14 h-14 rounded-full bg-[#32191D] border border-[#E5484D]/30 flex items-center justify-center text-[#FF6269] mb-4">
+        <div className="w-full max-w-md mx-auto py-12 text-center flex flex-col items-center bg-surface border border-theme rounded-[20px] p-8 shadow-xl">
+          <div className="w-14 h-14 rounded-full bg-[#FF304F]/10 border border-[#FF304F]/30 flex items-center justify-center text-[#FF304F] mb-4">
             <AlertCircle className="w-7 h-7" />
           </div>
-          <h2 className="text-base font-bold text-[#F5F5F7] mb-2">
+          <h2 className="text-base font-bold text-primary mb-2">
             {errorType === 'schema_missing'
               ? 'Database Migration Required'
               : errorType === 'permission_denied'
               ? 'Access Restricted'
               : 'Unable to load communities'}
           </h2>
-          <p className="text-xs text-[#858995] mb-6 max-w-sm leading-relaxed">{error}</p>
+          <p className="text-xs text-secondary mb-6 max-w-sm leading-relaxed">{error}</p>
           <button
             onClick={() => loadCommunities()}
-            className="inline-flex items-center gap-2 bg-[#E5484D] hover:bg-[#D7373F] text-white text-xs font-semibold px-5 py-2.5 rounded-[12px] transition-colors cursor-pointer"
+            className="inline-flex items-center gap-2 bg-[#FF304F] hover:bg-[#E5203F] text-white text-xs font-semibold px-5 py-2.5 rounded-[12px] transition-colors cursor-pointer"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>Retry</span>
@@ -372,14 +372,14 @@ export const CommunitiesPage: React.FC = () => {
 
       {/* Empty States */}
       {!isLoading && !error && communities.length === 0 && (
-        <div className="w-full max-w-md mx-auto py-12 sm:py-16 text-center flex flex-col items-center bg-[#101116] border border-dashed border-[#292B34] rounded-[24px] p-8 shadow-xl animate-fade-in">
+        <div className="w-full max-w-md mx-auto py-12 sm:py-16 text-center flex flex-col items-center bg-surface border border-dashed border-theme rounded-[24px] p-8 shadow-xl animate-fade-in">
           {search ? (
             <>
-              <div className="w-16 h-16 rounded-full bg-[#1B1D24] border border-[#292B34] flex items-center justify-center text-[#858995] mb-4">
+              <div className="w-16 h-16 rounded-full bg-surface-secondary border border-theme flex items-center justify-center text-muted mb-4">
                 <Search className="w-7 h-7" />
               </div>
-              <h2 className="text-lg font-bold text-[#F5F5F7] mb-2">No communities found</h2>
-              <p className="text-xs text-[#858995] mb-6 max-w-sm leading-relaxed">
+              <h2 className="text-lg font-bold text-primary mb-2">No communities found</h2>
+              <p className="text-xs text-secondary mb-6 max-w-sm leading-relaxed">
                 No groups matched &ldquo;{search}&rdquo;. Try another search keyword or clear your filter.
               </p>
               <Button variant="outline" size="sm" onClick={() => setSearch('')}>
@@ -388,13 +388,13 @@ export const CommunitiesPage: React.FC = () => {
             </>
           ) : activeTab === 'my' ? (
             <>
-              <div className="w-16 h-16 rounded-full bg-[#1B1D24] border border-[#292B34] flex items-center justify-center text-[#E5484D] mb-4">
+              <div className="w-16 h-16 rounded-full bg-surface-secondary border border-theme flex items-center justify-center text-[#FF304F] mb-4">
                 <Users className="w-7 h-7" />
               </div>
-              <h2 className="text-lg font-bold text-[#F5F5F7] mb-2">
+              <h2 className="text-lg font-bold text-primary mb-2">
                 You haven&apos;t joined any communities yet
               </h2>
-              <p className="text-xs text-[#858995] mb-6 max-w-sm leading-relaxed">
+              <p className="text-xs text-secondary mb-6 max-w-sm leading-relaxed">
                 Start learning together by exploring active skill groups or creating your own.
               </p>
               <div className="flex items-center gap-2">
@@ -408,13 +408,13 @@ export const CommunitiesPage: React.FC = () => {
             </>
           ) : (
             <>
-              <div className="w-16 h-16 rounded-full bg-[#1B1D24] border border-[#292B34] flex items-center justify-center text-[#E5484D] mb-4">
+              <div className="w-16 h-16 rounded-full bg-surface-secondary border border-theme flex items-center justify-center text-[#FF304F] mb-4">
                 <Users className="w-7 h-7" />
               </div>
-              <h2 className="text-lg sm:text-xl font-bold text-[#F5F5F7] mb-2 tracking-tight">
+              <h2 className="text-lg sm:text-xl font-bold text-primary mb-2 tracking-tight">
                 No communities yet.
               </h2>
-              <p className="text-xs sm:text-sm text-[#858995] mb-6 max-w-sm leading-relaxed">
+              <p className="text-xs sm:text-sm text-secondary mb-6 max-w-sm leading-relaxed">
                 Start a community around a skill you love, or discover a group to learn with.
               </p>
               <div className="flex items-center gap-2.5">
@@ -460,11 +460,11 @@ export const CommunitiesPage: React.FC = () => {
               <div
                 key={comm.id}
                 onClick={() => navigate(`/communities/${comm.id}`)}
-                className="bg-[#15161B] border border-[#292B34] rounded-[16px] overflow-hidden flex flex-col justify-between hover:border-[#393C47] transition-all shadow-card cursor-pointer group"
+                className="bg-surface border border-theme rounded-[16px] overflow-hidden flex flex-col justify-between hover:border-theme-strong transition-all shadow-card cursor-pointer group"
               >
                 {/* Optional Cover Banner */}
                 {comm.cover_url && (
-                  <div className="w-full h-24 overflow-hidden bg-black/50 border-b border-[#292B34]">
+                  <div className="w-full h-24 overflow-hidden bg-black/50 border-b border-theme">
                     <img
                       src={comm.cover_url}
                       alt={comm.name}
@@ -476,7 +476,7 @@ export const CommunitiesPage: React.FC = () => {
                 <div className="p-5 flex flex-col gap-3">
                   {/* Avatar & Title Row */}
                   <div className="flex items-start gap-3">
-                    <div className="w-12 h-12 rounded-[12px] bg-[#1B1D24] border border-[#292B34] overflow-hidden shrink-0 flex items-center justify-center text-[#E5484D] font-bold text-base shadow-sm">
+                    <div className="w-12 h-12 rounded-[12px] bg-surface-secondary border border-theme overflow-hidden shrink-0 flex items-center justify-center text-[#FF304F] font-bold text-base shadow-sm">
                       {comm.avatar_url ? (
                         <img
                           src={comm.avatar_url}
@@ -490,26 +490,26 @@ export const CommunitiesPage: React.FC = () => {
 
                     <div className="flex flex-col min-w-0 flex-1">
                       <div className="flex items-center gap-1.5">
-                        <h3 className="text-sm font-bold text-[#F5F5F7] group-hover:text-white truncate">
+                        <h3 className="text-sm font-bold text-primary group-hover:text-primary truncate">
                           {comm.name}
                         </h3>
                         {isPrivate ? (
                           <span title="Private Community" className="inline-flex items-center">
-                            <Lock className="w-3 h-3 text-[#858995] shrink-0" aria-label="Private Community" />
+                            <Lock className="w-3 h-3 text-muted shrink-0" aria-label="Private Community" />
                           </span>
                         ) : (
                           <span title="Public Community" className="inline-flex items-center">
-                            <Globe className="w-3 h-3 text-[#858995] shrink-0" aria-label="Public Community" />
+                            <Globe className="w-3 h-3 text-muted shrink-0" aria-label="Public Community" />
                           </span>
                         )}
                       </div>
 
                       <div className="flex items-center gap-2 mt-0.5">
-                        <span className="text-[11px] font-semibold text-[#E5484D]">
+                        <span className="text-[11px] font-semibold text-[#FF304F]">
                           {comm.category}
                         </span>
-                        <span className="text-[#858995] text-[10px]">•</span>
-                        <span className="text-[11px] text-[#858995] font-medium">
+                        <span className="text-muted text-[10px]">•</span>
+                        <span className="text-[11px] text-muted font-medium">
                           {comm.members_count} {comm.members_count === 1 ? 'member' : 'members'}
                         </span>
                       </div>
@@ -518,7 +518,7 @@ export const CommunitiesPage: React.FC = () => {
 
                   {/* Description */}
                   {comm.description && (
-                    <p className="text-xs text-[#B0B3BD] leading-relaxed line-clamp-2">
+                    <p className="text-xs text-secondary leading-relaxed line-clamp-2">
                       {comm.description}
                     </p>
                   )}
@@ -526,12 +526,12 @@ export const CommunitiesPage: React.FC = () => {
 
                 {/* Card Action Footer */}
                 <div
-                  className="px-5 py-3 border-t border-[#292B34]/60 bg-[#101116]/40 flex items-center justify-between"
+                  className="px-5 py-3 border-t border-theme bg-surface-secondary/40 flex items-center justify-between"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <span className="text-[11px] text-[#858995] flex items-center gap-1">
+                  <span className="text-[11px] text-muted flex items-center gap-1">
                     {isOwner ? (
-                      <span className="text-[#E5484D] font-semibold">You own this</span>
+                      <span className="text-[#FF304F] font-semibold">You own this</span>
                     ) : isMember ? (
                       <span className="text-[#35B883] font-medium flex items-center gap-1">
                         <Check className="w-3 h-3" /> Member
@@ -550,7 +550,7 @@ export const CommunitiesPage: React.FC = () => {
                     {isOwner ? (
                       <button
                         onClick={() => navigate(`/communities/${comm.id}`)}
-                        className="px-3.5 py-1.5 rounded-[8px] text-xs font-semibold bg-[#1B1D24] text-[#F5F5F7] border border-[#292B34] hover:bg-[#282A32] transition-colors cursor-pointer"
+                        className="px-3.5 py-1.5 rounded-[8px] text-xs font-semibold bg-surface text-primary border border-theme hover:bg-surface-secondary transition-colors cursor-pointer"
                       >
                         Manage
                       </button>
@@ -558,7 +558,7 @@ export const CommunitiesPage: React.FC = () => {
                       <div className="flex items-center gap-1.5">
                         <button
                           onClick={() => navigate(`/communities/${comm.id}`)}
-                          className="px-3 py-1.5 rounded-[8px] text-xs font-semibold bg-[#1B1D24] text-[#F5F5F7] border border-[#292B34] hover:bg-[#282A32] transition-colors cursor-pointer flex items-center gap-1"
+                          className="px-3 py-1.5 rounded-[8px] text-xs font-semibold bg-surface text-primary border border-theme hover:bg-surface-secondary transition-colors cursor-pointer flex items-center gap-1"
                         >
                           <span>Open</span>
                           <ArrowRight className="w-3 h-3" />
@@ -566,7 +566,7 @@ export const CommunitiesPage: React.FC = () => {
                         <button
                           disabled={isActionLoading}
                           onClick={(e) => handleToggleJoin(e, comm)}
-                          className="px-2.5 py-1.5 rounded-[8px] text-[11px] font-medium text-[#858995] hover:text-[#FF6269] hover:bg-[#32191D]/40 transition-colors cursor-pointer"
+                          className="px-2.5 py-1.5 rounded-[8px] text-[11px] font-medium text-muted hover:text-[#FF6269] hover:bg-[#FF304F]/10 transition-colors cursor-pointer"
                         >
                           Leave
                         </button>
@@ -574,7 +574,7 @@ export const CommunitiesPage: React.FC = () => {
                     ) : isPendingRequest ? (
                       <button
                         disabled
-                        className="px-3.5 py-1.5 rounded-[8px] text-xs font-semibold bg-[#1B1D24] text-[#858995] border border-[#292B34] opacity-80 cursor-not-allowed"
+                        className="px-3.5 py-1.5 rounded-[8px] text-xs font-semibold bg-surface-secondary text-muted border border-theme opacity-80 cursor-not-allowed"
                       >
                         Requested
                       </button>
@@ -582,7 +582,7 @@ export const CommunitiesPage: React.FC = () => {
                       <button
                         disabled={isActionLoading}
                         onClick={(e) => handleToggleJoin(e, comm)}
-                        className="px-3.5 py-1.5 rounded-[8px] text-xs font-semibold bg-[#E5484D] hover:bg-[#D7373F] text-white shadow-xs transition-colors cursor-pointer active:scale-95 flex items-center gap-1"
+                        className="px-3.5 py-1.5 rounded-[8px] text-xs font-semibold bg-[#FF304F] hover:bg-[#E5203F] text-white shadow-xs transition-colors cursor-pointer active:scale-95 flex items-center gap-1"
                       >
                         {isActionLoading ? (
                           <span>Updating...</span>
@@ -610,7 +610,7 @@ export const CommunitiesPage: React.FC = () => {
       >
         <form onSubmit={handleCreateSubmit} className="flex flex-col gap-4">
           {formError && (
-            <div className="p-3 rounded-[10px] bg-[#32191D] border border-[#E5484D]/40 text-xs text-[#FF6269] flex items-center gap-2">
+            <div className="p-3 rounded-[10px] bg-[#FF304F]/10 border border-[#FF304F]/40 text-xs text-[#FF6269] flex items-center gap-2">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{formError}</span>
             </div>
@@ -618,8 +618,8 @@ export const CommunitiesPage: React.FC = () => {
 
           {/* Name */}
           <div className="flex flex-col gap-1">
-            <label className="text-xs font-medium text-[#B0B3BD]">
-              Community Name <span className="text-[#E5484D]">*</span>
+            <label className="text-xs font-medium text-secondary">
+              Community Name <span className="text-[#FF304F]">*</span>
             </label>
             <input
               type="text"
@@ -629,17 +629,17 @@ export const CommunitiesPage: React.FC = () => {
               value={name}
               onChange={(e) => handleNameChange(e.target.value)}
               placeholder="e.g., Next.js & Fullstack Builders"
-              className="w-full bg-[#15161B] text-[#F5F5F7] text-xs rounded-[10px] border border-[#292B34] p-2.5 focus:border-[#FF7479] focus:outline-none"
+              className="w-full bg-surface text-primary placeholder-[#9297A2] text-xs rounded-[10px] border border-theme p-2.5 focus:border-[#FF304F] focus:outline-none"
             />
           </div>
 
           {/* Slug */}
           <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-medium text-[#B0B3BD]">
-                URL Slug <span className="text-[#E5484D]">*</span>
+              <label className="text-xs font-medium text-secondary">
+                URL Slug <span className="text-[#FF304F]">*</span>
               </label>
-              <span className="text-[10px] text-[#858995]">/communities/{slug || 'your-slug'}</span>
+              <span className="text-[10px] text-muted">/communities/{slug || 'your-slug'}</span>
             </div>
             <input
               type="text"
@@ -650,19 +650,19 @@ export const CommunitiesPage: React.FC = () => {
                 setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]+/g, '-'));
               }}
               placeholder="e.g., nextjs-fullstack-builders"
-              className="w-full bg-[#15161B] text-[#F5F5F7] text-xs font-mono rounded-[10px] border border-[#292B34] p-2.5 focus:border-[#FF7479] focus:outline-none"
+              className="w-full bg-surface text-primary placeholder-[#9297A2] text-xs font-mono rounded-[10px] border border-theme p-2.5 focus:border-[#FF304F] focus:outline-none"
             />
           </div>
 
           {/* Category */}
           <div className="flex flex-col gap-1">
-            <label className="text-xs font-medium text-[#B0B3BD]">
-              Category <span className="text-[#E5484D]">*</span>
+            <label className="text-xs font-medium text-secondary">
+              Category <span className="text-[#FF304F]">*</span>
             </label>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full bg-[#15161B] text-[#F5F5F7] text-xs rounded-[10px] border border-[#292B34] p-2.5 focus:border-[#FF7479] focus:outline-none cursor-pointer"
+              className="w-full bg-surface text-primary text-xs rounded-[10px] border border-theme p-2.5 focus:border-[#FF304F] focus:outline-none cursor-pointer"
             >
               {categories
                 .filter((c) => c !== 'All')
@@ -676,21 +676,21 @@ export const CommunitiesPage: React.FC = () => {
 
           {/* Visibility */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-[#B0B3BD]">Visibility</label>
+            <label className="text-xs font-medium text-secondary">Visibility</label>
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
                 onClick={() => setVisibility('public')}
                 className={`flex items-center gap-2 p-2.5 rounded-[10px] border text-left transition-colors cursor-pointer ${
                   visibility === 'public'
-                    ? 'bg-[#1B1D24] border-[#E5484D] text-[#F5F5F7]'
-                    : 'bg-[#15161B] border-[#292B34] text-[#858995]'
+                    ? 'bg-surface-secondary border-[#FF304F] text-primary'
+                    : 'bg-surface border-theme text-secondary'
                 }`}
               >
-                <Globe className="w-4 h-4 text-[#E5484D] shrink-0" />
+                <Globe className="w-4 h-4 text-[#FF304F] shrink-0" />
                 <div className="flex flex-col">
                   <span className="text-xs font-semibold">Public</span>
-                  <span className="text-[10px] text-[#858995]">Anyone can view and join</span>
+                  <span className="text-[10px] text-muted">Anyone can view and join</span>
                 </div>
               </button>
 
@@ -699,14 +699,14 @@ export const CommunitiesPage: React.FC = () => {
                 onClick={() => setVisibility('private')}
                 className={`flex items-center gap-2 p-2.5 rounded-[10px] border text-left transition-colors cursor-pointer ${
                   visibility === 'private'
-                    ? 'bg-[#1B1D24] border-[#E5484D] text-[#F5F5F7]'
-                    : 'bg-[#15161B] border-[#292B34] text-[#858995]'
+                    ? 'bg-surface-secondary border-[#FF304F] text-primary'
+                    : 'bg-surface border-theme text-secondary'
                 }`}
               >
-                <Lock className="w-4 h-4 text-[#E5484D] shrink-0" />
+                <Lock className="w-4 h-4 text-[#FF304F] shrink-0" />
                 <div className="flex flex-col">
                   <span className="text-xs font-semibold">Private</span>
-                  <span className="text-[10px] text-[#858995]">Approval required to join</span>
+                  <span className="text-[10px] text-muted">Approval required to join</span>
                 </div>
               </button>
             </div>
@@ -714,8 +714,8 @@ export const CommunitiesPage: React.FC = () => {
 
           {/* Description */}
           <div className="flex flex-col gap-1">
-            <label className="text-xs font-medium text-[#B0B3BD]">
-              Description <span className="text-[#E5484D]">*</span>
+            <label className="text-xs font-medium text-secondary">
+              Description <span className="text-[#FF304F]">*</span>
             </label>
             <textarea
               required
@@ -725,26 +725,26 @@ export const CommunitiesPage: React.FC = () => {
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
               placeholder="What skills will members share, build, and practice in this community?"
-              className="w-full bg-[#15161B] text-[#F5F5F7] placeholder-[#858995] text-xs rounded-[10px] border border-[#292B34] p-2.5 focus:border-[#FF7479] focus:outline-none"
+              className="w-full bg-surface text-primary placeholder-[#9297A2] text-xs rounded-[10px] border border-theme p-2.5 focus:border-[#FF304F] focus:outline-none"
             />
           </div>
 
           {/* Cover Image URL */}
           <div className="flex flex-col gap-1">
-            <label className="text-xs font-medium text-[#B0B3BD]">
-              Cover Image URL <span className="text-[10px] text-[#858995]">(Optional)</span>
+            <label className="text-xs font-medium text-secondary">
+              Cover Image URL <span className="text-[10px] text-muted">(Optional)</span>
             </label>
             <input
               type="url"
               value={coverUrl}
               onChange={(e) => setCoverUrl(e.target.value)}
               placeholder="https://example.com/banner.jpg"
-              className="w-full bg-[#15161B] text-[#F5F5F7] text-xs rounded-[10px] border border-[#292B34] p-2.5 focus:border-[#FF7479] focus:outline-none"
+              className="w-full bg-surface text-primary placeholder-[#9297A2] text-xs rounded-[10px] border border-theme p-2.5 focus:border-[#FF304F] focus:outline-none"
             />
           </div>
 
           {/* Submit Actions */}
-          <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#292B34]/60">
+          <div className="flex items-center justify-end gap-2 pt-3 border-t border-theme">
             <Button
               type="button"
               variant="ghost"

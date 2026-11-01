@@ -99,31 +99,31 @@ export const HomePage: React.FC = () => {
       <StoriesBar />
 
       {/* Feed Filter Tabs */}
-      <div className="flex items-center justify-between border-b border-[#292B34] pb-2 mb-4">
+      <div className="flex items-center justify-between border-b border-theme pb-2 mb-4">
         <div className="flex items-center gap-6">
           <button
             onClick={() => setFeedTab('forYou')}
             className={`flex items-center gap-2 pb-2 text-sm font-semibold transition-colors relative ${
-              feedTab === 'forYou' ? 'text-[#F5F5F7]' : 'text-[#858995] hover:text-[#B0B3BD]'
+              feedTab === 'forYou' ? 'text-primary' : 'text-secondary hover:text-primary'
             }`}
           >
-            <Sparkles className="w-4 h-4 text-[#E5484D]" />
+            <Sparkles className="w-4 h-4 text-[#FF304F]" />
             <span>For You</span>
             {feedTab === 'forYou' && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#E5484D] rounded-full" />
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#FF304F] rounded-full" />
             )}
           </button>
 
           <button
             onClick={() => setFeedTab('following')}
             className={`flex items-center gap-2 pb-2 text-sm font-semibold transition-colors relative ${
-              feedTab === 'following' ? 'text-[#F5F5F7]' : 'text-[#858995] hover:text-[#B0B3BD]'
+              feedTab === 'following' ? 'text-primary' : 'text-secondary hover:text-primary'
             }`}
           >
             <Users className="w-4 h-4" />
             <span>Following</span>
             {feedTab === 'following' && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#E5484D] rounded-full" />
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#FF304F] rounded-full" />
             )}
           </button>
         </div>
@@ -132,9 +132,9 @@ export const HomePage: React.FC = () => {
           onClick={() => fetchPosts(true)}
           disabled={isRefreshing}
           aria-label="Refresh feed"
-          className="text-[#858995] hover:text-[#F5F5F7] p-1.5 rounded-[8px] hover:bg-[#15161B] transition-colors"
+          className="text-secondary hover:text-primary p-1.5 rounded-[8px] hover:bg-surface-secondary transition-colors"
         >
-          <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-[#E5484D]' : ''}`} />
+          <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-[#FF304F]' : ''}`} />
         </button>
       </div>
 
@@ -147,12 +147,16 @@ export const HomePage: React.FC = () => {
           </>
         ) : posts.length === 0 ? (
           <EmptyState
-            title={feedTab === 'following' ? 'No posts from creators you follow yet' : 'Your feed is just getting started'}
+            title={feedTab === 'following' ? 'No posts from creators you follow yet' : 'No posts yet'}
             description={
               feedTab === 'following'
                 ? 'Follow creators in the Explore tab or suggested creators to see their tutorials and portfolios here.'
-                : 'Publish a skill showcase or tutorial post to kick off the community learning feed!'
+                : 'Be the first to share a tutorial, design, or project with the Upmind community!'
             }
+            action={{
+              label: 'Create Your First Post',
+              onClick: () => window.dispatchEvent(new CustomEvent('upmind:openCreatePost')),
+            }}
           />
         ) : (
           posts.map((post) => (

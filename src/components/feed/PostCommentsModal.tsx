@@ -98,18 +98,18 @@ export const PostCommentsModal: React.FC<PostCommentsModalProps> = ({
         {/* Comments list */}
         <div className="flex-1 overflow-y-auto space-y-4 pr-1">
           {/* Post Author Caption as first item */}
-          <div className="flex items-start gap-3 pb-3 border-b border-[#292B34]/60">
+          <div className="flex items-start gap-3 pb-3 border-b border-theme">
             <Avatar
               src={post.author?.avatar_url}
               name={post.author?.full_name || post.author?.username}
               size="sm"
             />
             <div className="flex flex-col min-w-0">
-              <div className="text-xs text-[#F5F5F7]">
+              <div className="text-xs text-primary">
                 <strong className="mr-1.5">{post.author?.username}</strong>
                 <span>{post.caption}</span>
               </div>
-              <span className="text-[10px] text-[#858995] mt-1">
+              <span className="text-[10px] text-muted mt-1">
                 {formatTimeAgo(post.created_at)}
               </span>
             </div>
@@ -118,12 +118,12 @@ export const PostCommentsModal: React.FC<PostCommentsModalProps> = ({
           {/* Comment items */}
           {isLoading ? (
             <div className="flex justify-center py-8">
-              <span className="text-xs text-[#858995]">Loading comments...</span>
+              <span className="text-xs text-muted">Loading comments...</span>
             </div>
           ) : comments.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <p className="text-xs font-medium text-[#F5F5F7]">No comments yet</p>
-              <p className="text-[11px] text-[#858995] mt-1">Be the first to start the discussion!</p>
+              <p className="text-xs font-medium text-primary">No comments yet</p>
+              <p className="text-[11px] text-muted mt-1">Be the first to start the discussion!</p>
             </div>
           ) : (
             comments.map((comment) => {
@@ -136,11 +136,11 @@ export const PostCommentsModal: React.FC<PostCommentsModalProps> = ({
                     size="sm"
                   />
                   <div className="flex flex-col min-w-0 flex-1">
-                    <div className="text-xs text-[#F5F5F7] leading-relaxed">
-                      <strong className="mr-1.5 text-white">{author?.username || 'member'}</strong>
+                    <div className="text-xs text-primary leading-relaxed">
+                      <strong className="mr-1.5 text-primary">{author?.username || 'member'}</strong>
                       <span>{comment.content}</span>
                     </div>
-                    <span className="text-[10px] text-[#858995] mt-1">
+                    <span className="text-[10px] text-muted mt-1">
                       {formatTimeAgo(comment.created_at)}
                     </span>
                   </div>
@@ -153,7 +153,7 @@ export const PostCommentsModal: React.FC<PostCommentsModalProps> = ({
         {/* Comment input form */}
         <form
           onSubmit={handleSubmit}
-          className="flex items-center gap-2 pt-3 border-t border-[#292B34] mt-2"
+          className="flex items-center gap-2 pt-3 border-t border-theme mt-2"
         >
           <Avatar
             src={profile?.avatar_url}
@@ -165,12 +165,12 @@ export const PostCommentsModal: React.FC<PostCommentsModalProps> = ({
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
             placeholder="Add a comment..."
-            className="flex-1 bg-[#1B1D24] text-[#F5F5F7] placeholder-[#858995] text-xs rounded-[10px] border border-[#292B34] px-3 py-2 focus:border-[#FF7479] focus:outline-none"
+            className="flex-1 bg-surface-secondary text-primary placeholder-[#9297A2] text-xs rounded-[10px] border border-theme px-3 py-2 focus:border-[#FF304F] focus:outline-none"
           />
           <button
             type="submit"
             disabled={!newComment.trim() || isSubmitting}
-            className="p-2 text-[#E5484D] hover:text-[#FF7479] disabled:opacity-40 transition-colors"
+            className="p-2 text-[#FF304F] hover:opacity-80 disabled:opacity-40 transition-colors"
           >
             <Send className="w-4 h-4" />
           </button>

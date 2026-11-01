@@ -148,13 +148,13 @@ export const ExplorePage: React.FC = () => {
     <div className="w-full flex flex-col gap-6">
       {/* Search Input */}
       <div className="relative w-full">
-        <Search className="w-4 h-4 text-[#858995] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+        <Search className="w-4 h-4 text-muted absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
         <input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search creators, skills, tutorials, tags (#UI/UX, Python, Flutter)..."
-          className="w-full bg-[#15161B] text-[#F5F5F7] placeholder-[#858995] text-sm rounded-[14px] border border-[#292B34] pl-10 pr-4 py-3 focus:border-[#FF7479] focus:outline-none transition-colors"
+          className="w-full bg-surface text-primary placeholder-[#9297A2] text-sm rounded-[14px] border border-theme pl-10 pr-4 py-3 focus:border-[#FF304F] focus:outline-none transition-colors"
         />
       </div>
 
@@ -166,8 +166,8 @@ export const ExplorePage: React.FC = () => {
             onClick={() => setSelectedCategory(cat)}
             className={`text-xs px-3.5 py-1.5 rounded-[10px] font-medium transition-all shrink-0 ${
               selectedCategory === cat
-                ? 'bg-[#E5484D] text-white shadow-xs'
-                : 'bg-[#15161B] text-[#B0B3BD] hover:text-[#F5F5F7] hover:bg-[#1B1D24] border border-[#292B34]'
+                ? 'bg-[#FF304F] text-white shadow-xs'
+                : 'bg-surface text-secondary hover:text-primary hover:bg-surface-secondary border border-theme'
             }`}
           >
             {cat}
@@ -179,7 +179,7 @@ export const ExplorePage: React.FC = () => {
       {creators.length > 0 && !searchQuery && (
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-[#858995] uppercase tracking-wider">
+            <span className="text-xs font-bold text-muted uppercase tracking-wider">
               Top Mentors & Creators
             </span>
           </div>
@@ -190,22 +190,21 @@ export const ExplorePage: React.FC = () => {
               return (
                 <div
                   key={c.id}
-                  className="w-40 bg-[#15161B] border border-[#292B34] rounded-[16px] p-3 flex flex-col items-center text-center shrink-0 hover:border-[#393C47] transition-all"
+                  className="w-40 bg-surface border border-theme rounded-[16px] p-3 flex flex-col items-center text-center shrink-0 hover:border-theme-strong transition-all"
                 >
                   <Avatar
                     src={c.avatar_url}
                     name={c.full_name || c.username}
                     size="lg"
-                    hasStory={true}
                     onClick={() => navigate(`/u/${c.username}`)}
                   />
                   <span
                     onClick={() => navigate(`/u/${c.username}`)}
-                    className="text-xs font-semibold text-[#F5F5F7] hover:underline cursor-pointer mt-2 truncate w-full"
+                    className="text-xs font-semibold text-primary hover:underline cursor-pointer mt-2 truncate w-full"
                   >
                     {c.display_name || c.username}
                   </span>
-                  <span className="text-[10px] text-[#858995] truncate w-full mb-2.5">
+                  <span className="text-[10px] text-muted truncate w-full mb-2.5">
                     @{c.username}
                   </span>
                   {user?.id !== c.id && (
@@ -213,8 +212,8 @@ export const ExplorePage: React.FC = () => {
                       onClick={() => toggleFollow(c.id)}
                       className={`w-full py-1 text-xs font-semibold rounded-[8px] transition-colors flex items-center justify-center gap-1 ${
                         isFollowing
-                          ? 'bg-[#1B1D24] text-[#B0B3BD] border border-[#292B34]'
-                          : 'bg-[#E5484D] hover:bg-[#D7373F] text-white'
+                          ? 'bg-surface-secondary text-secondary border border-theme'
+                          : 'bg-[#FF304F] hover:bg-[#E5203F] text-white'
                       }`}
                     >
                       {isFollowing ? (
@@ -239,7 +238,7 @@ export const ExplorePage: React.FC = () => {
 
       {/* Discovery Grid */}
       <div className="flex flex-col gap-3">
-        <span className="text-xs font-bold text-[#858995] uppercase tracking-wider">
+        <span className="text-xs font-bold text-muted uppercase tracking-wider">
           Explore Showcase
         </span>
 
@@ -248,12 +247,12 @@ export const ExplorePage: React.FC = () => {
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div
                 key={i}
-                className="w-full aspect-square bg-[#15161B] rounded-[14px] animate-pulse"
+                className="w-full aspect-square bg-surface-secondary rounded-[14px] animate-pulse"
               />
             ))}
           </div>
         ) : filteredPosts.length === 0 ? (
-          <div className="py-12 text-center text-xs text-[#858995] bg-[#15161B]/50 rounded-[16px] border border-[#292B34]">
+          <div className="py-12 text-center text-xs text-muted bg-surface rounded-[16px] border border-theme">
             No matching posts found. Try another search keyword or category.
           </div>
         ) : (
@@ -262,21 +261,30 @@ export const ExplorePage: React.FC = () => {
               <div
                 key={post.id}
                 onClick={() => setActivePost(post)}
-                className="group relative aspect-square bg-[#15161B] rounded-[14px] overflow-hidden border border-[#292B34] cursor-pointer"
+                className="group relative aspect-square bg-surface rounded-[14px] overflow-hidden border border-theme cursor-pointer"
               >
                 {post.image_url || post.video_url ? (
-                  <img
-                    src={post.image_url || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80'}
-                    alt={post.caption}
-                    loading="lazy"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+                  post.video_url ? (
+                    <video
+                      src={post.video_url}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      muted
+                      playsInline
+                    />
+                  ) : (
+                    <img
+                      src={post.image_url!}
+                      alt={post.caption}
+                      loading="lazy"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  )
                 ) : (
-                  <div className="w-full h-full p-4 flex flex-col justify-between bg-gradient-to-br from-[#15161B] to-[#1B1D24]">
-                    <span className="text-xs text-[#F5F5F7] line-clamp-4 leading-relaxed font-medium">
+                  <div className="w-full h-full p-4 flex flex-col justify-between bg-surface-secondary">
+                    <span className="text-xs text-primary line-clamp-4 leading-relaxed font-medium">
                       {post.caption}
                     </span>
-                    <span className="text-[10px] text-[#E5484D] font-semibold">
+                    <span className="text-[10px] text-[#FF304F] font-semibold">
                       {post.skill_tags?.[0] || '#Skill'}
                     </span>
                   </div>
@@ -284,7 +292,7 @@ export const ExplorePage: React.FC = () => {
 
                 {/* Tutorial overlay tag */}
                 {post.post_type === 'tutorial' && (
-                  <div className="absolute top-2 left-2 p-1 rounded-md bg-black/70 backdrop-blur-xs text-[#E5484D]">
+                  <div className="absolute top-2 left-2 p-1 rounded-md bg-black/70 backdrop-blur-xs text-[#FF304F]">
                     <BookOpen className="w-3.5 h-3.5" />
                   </div>
                 )}

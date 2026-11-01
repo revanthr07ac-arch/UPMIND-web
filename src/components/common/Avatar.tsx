@@ -44,7 +44,7 @@ export const Avatar: React.FC<AvatarProps> = ({
 
   const innerAvatar = (
     <div
-      className={`rounded-full overflow-hidden flex items-center justify-center font-semibold bg-[#23252D] text-[#F5F5F7] border border-[#292B34] select-none ${
+      className={`rounded-full overflow-hidden flex items-center justify-center font-semibold bg-surface-secondary text-primary border border-theme select-none ${
         sizeClasses[size]
       } ${className}`}
       onClick={onClick}
@@ -67,15 +67,15 @@ export const Avatar: React.FC<AvatarProps> = ({
   }
 
   const ringStyle = isStorySeen
-    ? 'bg-[#393C47]'
-    : 'bg-gradient-to-tr from-[#E5484D] via-[#FF7479] to-[#BE3038]';
+    ? 'bg-[var(--border-strong)]'
+    : 'bg-gradient-to-tr from-[#FF304F] via-[#FF7479] to-[#BE3038]';
 
   return (
     <div
       className={`inline-block rounded-full ${storyPadding[size]} ${ringStyle} cursor-pointer transition-transform hover:scale-105 active:scale-95`}
       onClick={onClick}
     >
-      <div className="rounded-full bg-[#0B0C0F] p-[1.5px] flex items-center justify-center">
+      <div className="rounded-full bg-app p-[1.5px] flex items-center justify-center">
         {innerAvatar}
       </div>
     </div>

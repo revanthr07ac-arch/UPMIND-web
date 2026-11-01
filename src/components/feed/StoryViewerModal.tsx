@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
 import { Avatar } from '../common/Avatar';
 import { formatTimeAgo } from '../../lib/utils';
+import { useAuth } from '../../context/AuthContext';
+import { supabase } from '../../lib/supabase';
 import type { Story } from '../../types/database';
 
 interface StoryViewerModalProps {
@@ -9,6 +11,7 @@ interface StoryViewerModalProps {
   onClose: () => void;
   stories: Story[];
   initialIndex?: number;
+  onStoryDeleted?: (storyId: string) => void;
 }
 
 export const StoryViewerModal: React.FC<StoryViewerModalProps> = ({
@@ -16,10 +19,13 @@ export const StoryViewerModal: React.FC<StoryViewerModalProps> = ({
   onClose,
   stories,
   initialIndex = 0,
+  onStoryDeleted,
 }) => {
+  const { user } = useAuth();
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [progress, setProgress] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const timerRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -77,6 +83,40 @@ export const StoryViewerModal: React.FC<StoryViewerModalProps> = ({
     }
   };
 
+  const handleDeleteStory = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isDeleting || !user || user.id !== currentStory.user_id) return;
+    if (!window.confirm('Are you sure you want to delete this story?')) return;
+
+    setIsDeleting(true);
+    try {
+      const { error: delError } = await supabase
+        .from('stories')
+        .delete()
+        .eq('id', currentStory.id)
+        .eq('user_id', user.id);
+
+      if (delError) throw delError;
+
+      onStoryDeleted?.(currentStory.id);
+      window.dispatchEvent(new CustomEvent('upmind:refreshStories'));
+
+      if (stories.length <= 1) {
+        onClose();
+      } else if (currentIndex >= stories.length - 1) {
+        setCurrentIndex((prev) => Math.max(0, prev - 1));
+        setProgress(0);
+      } else {
+        setProgress(0);
+      }
+    } catch (err: any) {
+      console.error('Failed to delete story:', err);
+      alert('Unable to delete story. Please try again.');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
     <div
       className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center select-none"
@@ -84,7 +124,7 @@ export const StoryViewerModal: React.FC<StoryViewerModalProps> = ({
     >
       {/* Story View Container */}
       <div
-        className="relative w-full max-w-sm sm:max-w-md h-[90vh] max-h-[750px] bg-[#15161B] rounded-[20px] overflow-hidden border border-[#292B34] flex flex-col justify-between"
+        className="relative w-full max-w-sm sm:max-w-md h-[90vh] max-h-[750px] bg-surface rounded-[20px] overflow-hidden border border-theme flex flex-col justify-between"
         onClick={(e) => e.stopPropagation()}
         onMouseDown={() => setIsPaused(true)}
         onMouseUp={() => setIsPaused(false)}
@@ -129,12 +169,27 @@ export const StoryViewerModal: React.FC<StoryViewerModalProps> = ({
             </div>
           </div>
 
-          <button
-            onClick={onClose}
-            className="p-1.5 rounded-full bg-black/40 hover:bg-black/60 text-white transition-colors"
-          >
-            <X className="w-4 h-4" />
-          </button>
+          <div className="flex items-center gap-2">
+            {user?.id === currentStory.user_id && (
+              <button
+                onClick={handleDeleteStory}
+                disabled={isDeleting}
+                title="Delete story"
+                aria-label="Delete story"
+                className="p-1.5 rounded-full bg-black/40 hover:bg-[#FF304F] text-white transition-colors cursor-pointer"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            )}
+
+            <button
+              onClick={onClose}
+              aria-label="Close story"
+              className="p-1.5 rounded-full bg-black/40 hover:bg-black/60 text-white transition-colors cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
         </div>
 
         {/* Media Background */}
@@ -177,7 +232,7 @@ export const StoryViewerModal: React.FC<StoryViewerModalProps> = ({
         {currentIndex > 0 && (
           <button
             onClick={handlePrev}
-            className="hidden sm:flex absolute -left-12 top-1/2 -translate-y-1/2 p-2 rounded-full bg-[#1B1D24] text-white hover:bg-[#282A32] border border-[#292B34]"
+            className="hidden sm:flex absolute -left-12 top-1/2 -translate-y-1/2 p-2 rounded-full bg-surface text-primary hover:bg-surface-secondary border border-theme shadow-md"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
@@ -185,7 +240,7 @@ export const StoryViewerModal: React.FC<StoryViewerModalProps> = ({
         {currentIndex < stories.length - 1 && (
           <button
             onClick={handleNext}
-            className="hidden sm:flex absolute -right-12 top-1/2 -translate-y-1/2 p-2 rounded-full bg-[#1B1D24] text-white hover:bg-[#282A32] border border-[#292B34]"
+            className="hidden sm:flex absolute -right-12 top-1/2 -translate-y-1/2 p-2 rounded-full bg-surface text-primary hover:bg-surface-secondary border border-theme shadow-md"
           >
             <ChevronRight className="w-5 h-5" />
           </button>

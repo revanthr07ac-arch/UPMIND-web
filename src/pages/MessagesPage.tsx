@@ -198,35 +198,35 @@ export const MessagesPage: React.FC = () => {
   };
 
   return (
-    <div className="w-full h-[calc(100vh-80px)] lg:h-[calc(100vh-48px)] flex bg-[#15161B] border border-[#292B34] rounded-[20px] overflow-hidden select-none">
+    <div className="w-full h-[calc(100vh-80px)] lg:h-[calc(100vh-48px)] flex bg-surface border border-theme rounded-[20px] overflow-hidden select-none">
       {/* Left Conversations Sidebar */}
       <div
-        className={`w-full md:w-80 lg:w-96 border-r border-[#292B34] flex flex-col bg-[#0B0C0F] ${
+        className={`w-full md:w-80 lg:w-96 border-r border-theme flex flex-col bg-surface ${
           activeConversationId ? 'hidden md:flex' : 'flex'
         }`}
       >
-        <div className="p-4 border-b border-[#292B34] flex flex-col gap-3">
-          <h2 className="text-base font-bold text-[#F5F5F7] flex items-center gap-2">
-            <MessageCircle className="w-5 h-5 text-[#E5484D]" />
+        <div className="p-4 border-b border-theme flex flex-col gap-3">
+          <h2 className="text-base font-bold text-primary flex items-center gap-2">
+            <MessageCircle className="w-5 h-5 text-[#FF304F]" />
             <span>Direct Messages</span>
           </h2>
 
           <div className="relative">
-            <Search className="w-3.5 h-3.5 text-[#858995] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <Search className="w-3.5 h-3.5 text-muted absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
               placeholder="Search conversations..."
-              className="w-full bg-[#15161B] text-xs text-[#F5F5F7] placeholder-[#858995] rounded-[10px] border border-[#292B34] pl-8 pr-3 py-2 focus:outline-none focus:border-[#FF7479]"
+              className="w-full bg-surface-secondary text-xs text-primary placeholder-[#9297A2] rounded-[10px] border border-theme pl-8 pr-3 py-2 focus:outline-none focus:border-[#FF304F]"
             />
           </div>
         </div>
 
         {/* Conversation List */}
-        <div className="flex-1 overflow-y-auto divide-y divide-[#292B34]/40">
+        <div className="flex-1 overflow-y-auto divide-y divide-theme">
           {isLoadingList ? (
-            <div className="p-4 text-xs text-[#858995] text-center">Loading chats...</div>
+            <div className="p-4 text-xs text-muted text-center">Loading chats...</div>
           ) : conversations.length === 0 ? (
-            <div className="p-8 text-center text-xs text-[#858995]">
+            <div className="p-8 text-center text-xs text-muted">
               No conversations yet. Connect with a creator from their profile or a learning request!
             </div>
           ) : (
@@ -243,7 +243,7 @@ export const MessagesPage: React.FC = () => {
                     setSearchParams({ conv: conv.id });
                   }}
                   className={`flex items-center gap-3 p-3.5 cursor-pointer transition-colors ${
-                    isActive ? 'bg-[#1B1D24]' : 'hover:bg-[#15161B]'
+                    isActive ? 'bg-surface-secondary' : 'hover:bg-surface-secondary/60'
                   }`}
                 >
                   <Avatar
@@ -253,14 +253,14 @@ export const MessagesPage: React.FC = () => {
                   />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-semibold text-[#F5F5F7] truncate">
+                      <span className="text-xs font-semibold text-primary truncate">
                         {partner?.display_name || partner?.username || 'Member'}
                       </span>
-                      <span className="text-[10px] text-[#858995]">
+                      <span className="text-[10px] text-muted">
                         {formatTimeAgo(conv.updated_at)}
                       </span>
                     </div>
-                    <span className="text-[11px] text-[#858995] truncate block mt-0.5">
+                    <span className="text-[11px] text-muted truncate block mt-0.5">
                       @{partner?.username}
                     </span>
                   </div>
@@ -273,18 +273,18 @@ export const MessagesPage: React.FC = () => {
 
       {/* Right Chat Panel */}
       <div
-        className={`flex-1 flex flex-col bg-[#15161B] ${
+        className={`flex-1 flex flex-col bg-app ${
           !activeConversationId ? 'hidden md:flex' : 'flex'
         }`}
       >
         {activeConversationId ? (
           <>
             {/* Chat Header */}
-            <div className="px-4 py-3 border-b border-[#292B34] flex items-center justify-between bg-[#101116]">
+            <div className="px-4 py-3 border-b border-theme flex items-center justify-between bg-surface">
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setActiveConversationId(null)}
-                  className="md:hidden text-[#858995] hover:text-white p-1"
+                  className="md:hidden text-muted hover:text-primary p-1"
                 >
                   <ArrowLeft className="w-5 h-5" />
                 </button>
@@ -294,7 +294,7 @@ export const MessagesPage: React.FC = () => {
                   size="sm"
                 />
                 <div className="flex flex-col">
-                  <span className="text-xs font-bold text-[#F5F5F7]">
+                  <span className="text-xs font-bold text-primary">
                     {activePartner?.display_name || activePartner?.username || 'Chat'}
                   </span>
                   <span className="text-[10px] text-[#35B883] font-medium">Active</span>
@@ -305,9 +305,9 @@ export const MessagesPage: React.FC = () => {
             {/* Messages Thread */}
             <div className="flex-1 overflow-y-auto p-4 space-y-3">
               {isLoadingMessages ? (
-                <div className="text-center py-10 text-xs text-[#858995]">Loading messages...</div>
+                <div className="text-center py-10 text-xs text-muted">Loading messages...</div>
               ) : messages.length === 0 ? (
-                <div className="text-center py-16 text-xs text-[#858995] leading-relaxed">
+                <div className="text-center py-16 text-xs text-muted leading-relaxed">
                   Say hi to start collaborating! You can discuss study roadmaps and share materials.
                 </div>
               ) : (
@@ -321,15 +321,15 @@ export const MessagesPage: React.FC = () => {
                       <div
                         className={`max-w-[75%] rounded-[16px] px-4 py-2.5 text-xs leading-relaxed select-text ${
                           isMe
-                            ? 'bg-[#E5484D] text-white rounded-br-[4px]'
-                            : 'bg-[#1B1D24] text-[#F5F5F7] border border-[#292B34] rounded-bl-[4px]'
+                            ? 'bg-[#FF304F] text-white rounded-br-[4px]'
+                            : 'bg-surface text-primary border border-theme rounded-bl-[4px]'
                         }`}
                       >
                         {msg.content}
                       </div>
-                      <span className="text-[9px] text-[#858995] mt-1 px-1 flex items-center gap-1">
+                      <span className="text-[9px] text-muted mt-1 px-1 flex items-center gap-1">
                         {formatTimeAgo(msg.created_at)}
-                        {isMe && <CheckCheck className="w-3 h-3 text-[#E5484D]" />}
+                        {isMe && <CheckCheck className="w-3 h-3 text-[#FF304F]" />}
                       </span>
                     </div>
                   );
@@ -341,30 +341,30 @@ export const MessagesPage: React.FC = () => {
             {/* Chat Composer */}
             <form
               onSubmit={handleSendMessage}
-              className="p-3 bg-[#101116] border-t border-[#292B34] flex items-center gap-2"
+              className="p-3 bg-surface border-t border-theme flex items-center gap-2"
             >
               <input
                 type="text"
                 value={messageInput}
                 onChange={(e) => setMessageInput(e.target.value)}
                 placeholder="Message..."
-                className="flex-1 bg-[#1B1D24] text-xs text-[#F5F5F7] placeholder-[#858995] rounded-[12px] border border-[#292B34] px-3.5 py-2.5 focus:outline-none focus:border-[#FF7479]"
+                className="flex-1 bg-surface-secondary text-xs text-primary placeholder-[#9297A2] rounded-[12px] border border-theme px-3.5 py-2.5 focus:outline-none focus:border-[#FF304F]"
               />
               <button
                 type="submit"
                 disabled={!messageInput.trim() || isSending}
-                className="p-2.5 rounded-[12px] bg-[#E5484D] hover:bg-[#D7373F] text-white disabled:opacity-40 transition-colors"
+                className="p-2.5 rounded-[12px] bg-[#FF304F] hover:bg-[#E5203F] text-white disabled:opacity-40 transition-colors"
               >
                 <Send className="w-4 h-4" />
               </button>
             </form>
           </>
         ) : (
-          <div className="flex-1 flex flex-col items-center justify-center p-8 text-center text-[#858995]">
-            <div className="w-16 h-16 rounded-full bg-[#1B1D24] flex items-center justify-center mb-3">
-              <MessageCircle className="w-8 h-8 text-[#858995]" />
+          <div className="flex-1 flex flex-col items-center justify-center p-8 text-center text-muted">
+            <div className="w-16 h-16 rounded-full bg-surface-secondary flex items-center justify-center mb-3">
+              <MessageCircle className="w-8 h-8 text-muted" />
             </div>
-            <h3 className="text-sm font-semibold text-[#F5F5F7] mb-1">Your Messages</h3>
+            <h3 className="text-sm font-semibold text-primary mb-1">Your Messages</h3>
             <p className="text-xs max-w-xs leading-relaxed">
               Send private messages to ask questions about tutorials or coordinate peer-learning sessions.
             </p>

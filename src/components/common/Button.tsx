@@ -21,19 +21,19 @@ export const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const baseStyles =
-    'inline-flex items-center justify-center font-medium transition-all duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-50 disabled:cursor-not-allowed select-none active:scale-[0.98]';
+    'inline-flex items-center justify-center font-medium transition-all duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-50 disabled:cursor-not-allowed select-none active:scale-[0.98] cursor-pointer';
 
   const variants = {
     primary:
       'bg-[#E5484D] hover:bg-[#D7373F] active:bg-[#BE3038] text-white shadow-sm focus-visible:outline-[#FF7479]',
     secondary:
-      'bg-[#1B1D24] hover:bg-[#282A32] text-[#F5F5F7] border border-[#292B34] hover:border-[#393C47] focus-visible:outline-[#FF7479]',
+      'bg-surface-secondary hover:bg-surface-hover text-primary border border-theme hover:border-theme-strong focus-visible:outline-[#FF7479]',
     ghost:
-      'bg-transparent hover:bg-[#1B1D24] text-[#B0B3BD] hover:text-[#F5F5F7] focus-visible:outline-[#FF7479]',
+      'bg-transparent hover:bg-surface-secondary text-secondary hover:text-primary focus-visible:outline-[#FF7479]',
     destructive:
       'bg-[#FF6269]/10 text-[#FF6269] hover:bg-[#FF6269]/20 border border-[#FF6269]/30 focus-visible:outline-[#FF6269]',
     outline:
-      'bg-transparent border border-[#E5484D] text-[#E5484D] hover:bg-[#E5484D]/10 focus-visible:outline-[#FF7479]',
+      'bg-transparent border border-[#FF304F] text-[#FF304F] hover:bg-[#FF304F]/10 focus-visible:outline-[#FF7479]',
   };
 
   const sizes = {

@@ -91,7 +91,7 @@ export const NotificationsPage: React.FC = () => {
   const getNotificationIcon = (type: Notification['type']) => {
     switch (type) {
       case 'like':
-        return <Heart className="w-3.5 h-3.5 fill-[#E5484D] text-[#E5484D]" />;
+        return <Heart className="w-3.5 h-3.5 fill-[#FF304F] text-[#FF304F]" />;
       case 'comment':
         return <MessageCircle className="w-3.5 h-3.5 text-[#70A7FF]" />;
       case 'follow':
@@ -99,9 +99,9 @@ export const NotificationsPage: React.FC = () => {
       case 'learning_request_new':
       case 'learning_request_accepted':
       case 'learning_request_completed':
-        return <GraduationCap className="w-3.5 h-3.5 text-[#E5484D]" />;
+        return <GraduationCap className="w-3.5 h-3.5 text-[#FF304F]" />;
       default:
-        return <Bell className="w-3.5 h-3.5 text-[#B0B3BD]" />;
+        return <Bell className="w-3.5 h-3.5 text-muted" />;
     }
   };
 
@@ -131,18 +131,18 @@ export const NotificationsPage: React.FC = () => {
 
   return (
     <div className="w-full flex flex-col gap-5 select-none">
-      <div className="flex items-center justify-between pb-3 border-b border-[#292B34]">
+      <div className="flex items-center justify-between pb-3 border-b border-theme">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-[10px] bg-[#15161B] border border-[#292B34] flex items-center justify-center text-[#E5484D]">
+          <div className="w-8 h-8 rounded-[10px] bg-surface border border-theme flex items-center justify-center text-[#FF304F]">
             <Bell className="w-4 h-4" />
           </div>
-          <h1 className="text-xl font-bold text-[#F5F5F7]">Notifications</h1>
+          <h1 className="text-xl font-bold text-primary">Notifications</h1>
         </div>
 
         {notifications.some((n) => !n.is_read) && (
           <button
             onClick={markAllAsRead}
-            className="flex items-center gap-1.5 text-xs font-semibold text-[#E5484D] hover:text-[#FF7479] transition-colors"
+            className="flex items-center gap-1.5 text-xs font-semibold text-[#FF304F] hover:opacity-80 transition-colors"
           >
             <Check className="w-3.5 h-3.5" />
             <span>Mark all read</span>
@@ -152,12 +152,12 @@ export const NotificationsPage: React.FC = () => {
 
       <div className="flex flex-col gap-2">
         {isLoading ? (
-          <div className="py-8 text-center text-xs text-[#858995]">
+          <div className="py-8 text-center text-xs text-muted">
             Loading notifications...
           </div>
         ) : notifications.length === 0 ? (
           <EmptyState
-            icon={<Bell className="w-6 h-6 text-[#858995]" />}
+            icon={<Bell className="w-6 h-6 text-muted" />}
             title="No notifications yet"
             description="When users like your posts, follow your profile, or send learning requests, you'll see them right here."
           />
@@ -168,8 +168,8 @@ export const NotificationsPage: React.FC = () => {
               onClick={() => handleNotificationClick(notif)}
               className={`flex items-center justify-between p-3.5 rounded-[14px] border cursor-pointer transition-all ${
                 notif.is_read
-                  ? 'bg-[#15161B]/60 border-[#292B34]/60 hover:bg-[#15161B]'
-                  : 'bg-[#1B1D24] border-[#E5484D]/30 shadow-xs hover:border-[#E5484D]/60'
+                  ? 'bg-surface border-theme hover:bg-surface-secondary/50'
+                  : 'bg-surface-secondary border-[#FF304F]/40 shadow-xs hover:border-[#FF304F]'
               }`}
             >
               <div className="flex items-center gap-3 min-w-0">
@@ -179,23 +179,23 @@ export const NotificationsPage: React.FC = () => {
                     name={notif.actor?.username}
                     size="md"
                   />
-                  <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-[#15161B] border border-[#292B34] flex items-center justify-center">
+                  <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-surface border border-theme flex items-center justify-center">
                     {getNotificationIcon(notif.type)}
                   </div>
                 </div>
 
                 <div className="flex flex-col min-w-0">
-                  <span className="text-xs text-[#F5F5F7] leading-relaxed">
+                  <span className="text-xs text-primary leading-relaxed">
                     {getNotificationText(notif)}
                   </span>
-                  <span className="text-[10px] text-[#858995] mt-0.5">
+                  <span className="text-[10px] text-muted mt-0.5">
                     {formatTimeAgo(notif.created_at)}
                   </span>
                 </div>
               </div>
 
               {!notif.is_read && (
-                <span className="w-2 h-2 rounded-full bg-[#E5484D] shrink-0 ml-3" />
+                <span className="w-2 h-2 rounded-full bg-[#FF304F] shrink-0 ml-3" />
               )}
             </div>
           ))

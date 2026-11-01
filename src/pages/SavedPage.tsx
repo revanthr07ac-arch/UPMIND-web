@@ -48,18 +48,18 @@ export const SavedPage: React.FC = () => {
 
   return (
     <div className="w-full flex flex-col gap-5 select-none">
-      <div className="flex items-center gap-2.5 pb-3 border-b border-[#292B34]">
-        <div className="w-8 h-8 rounded-[10px] bg-[#15161B] border border-[#292B34] flex items-center justify-center text-[#E5484D]">
+      <div className="flex items-center gap-2.5 pb-3 border-b border-theme">
+        <div className="w-8 h-8 rounded-[10px] bg-surface border border-theme flex items-center justify-center text-[#FF304F]">
           <Bookmark className="w-4 h-4" />
         </div>
-        <h1 className="text-xl font-bold text-[#F5F5F7]">Saved Collections</h1>
+        <h1 className="text-xl font-bold text-primary">Saved Collections</h1>
       </div>
 
       {isLoading ? (
-        <div className="py-12 text-center text-xs text-[#858995]">Loading bookmarks...</div>
+        <div className="py-12 text-center text-xs text-muted">Loading bookmarks...</div>
       ) : savedPosts.length === 0 ? (
         <EmptyState
-          icon={<Bookmark className="w-6 h-6 text-[#858995]" />}
+          icon={<Bookmark className="w-6 h-6 text-muted" />}
           title="No saved tutorials yet"
           description="Bookmark posts you want to study later or references you want to practice. Only you can see your saved posts."
         />

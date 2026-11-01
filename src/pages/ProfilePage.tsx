@@ -35,6 +35,7 @@ export const ProfilePage: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [savedPosts, setSavedPosts] = useState<Post[]>([]);
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
+  const [hasActiveStory, setHasActiveStory] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<'posts' | 'reels' | 'saved' | 'skills'>('posts');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -119,6 +120,20 @@ export const ProfilePage: React.FC = () => {
           .maybeSingle();
 
         setIsFollowing(!!followRecord);
+      }
+
+      // 5. Check if profile has an active story
+      try {
+        const { data: activeStories } = await supabase
+          .from('stories')
+          .select('id')
+          .eq('user_id', profileRow.id)
+          .gt('expires_at', new Date().toISOString())
+          .limit(1);
+
+        setHasActiveStory(Boolean(activeStories && activeStories.length > 0));
+      } catch (_) {
+        setHasActiveStory(false);
       }
     } catch (err) {
       console.error(err);
@@ -223,7 +238,7 @@ export const ProfilePage: React.FC = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="w-8 h-8 border-2 border-[#E5484D] border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-[#FF304F] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -231,8 +246,8 @@ export const ProfilePage: React.FC = () => {
   if (!targetProfile) {
     return (
       <div className="py-20 text-center">
-        <h2 className="text-lg font-bold text-[#F5F5F7] mb-2">User Not Found</h2>
-        <p className="text-xs text-[#858995] mb-4">The profile @{username} does not exist or has been removed.</p>
+        <h2 className="text-lg font-bold text-primary mb-2">User Not Found</h2>
+        <p className="text-xs text-secondary mb-4">The profile @{username} does not exist or has been removed.</p>
         <Button variant="primary" size="sm" onClick={() => navigate('/')}>
           Return Home
         </Button>
@@ -246,13 +261,13 @@ export const ProfilePage: React.FC = () => {
   return (
     <div className="w-full flex flex-col gap-6 select-none">
       {/* Profile Header */}
-      <div className="w-full bg-[#15161B] border border-[#292B34] rounded-[20px] p-5 sm:p-7 flex flex-col sm:flex-row items-center sm:items-start gap-6 shadow-card">
+      <div className="w-full bg-surface border border-theme rounded-[20px] p-5 sm:p-7 flex flex-col sm:flex-row items-center sm:items-start gap-6 shadow-card">
         {/* Avatar */}
         <Avatar
           src={targetProfile.avatar_url}
           name={targetProfile.full_name || targetProfile.username}
           size="2xl"
-          hasStory={true}
+          hasStory={hasActiveStory}
         />
 
         {/* Profile Info */}
@@ -260,14 +275,14 @@ export const ProfilePage: React.FC = () => {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between w-full gap-3">
             <div>
               <div className="flex items-center gap-2 justify-center sm:justify-start">
-                <h1 className="text-xl font-bold text-[#F5F5F7]">
+                <h1 className="text-xl font-bold text-primary">
                   {targetProfile.display_name || targetProfile.full_name || targetProfile.username}
                 </h1>
-                <span className="text-xs text-[#858995]">@{targetProfile.username}</span>
+                <span className="text-xs text-muted">@{targetProfile.username}</span>
               </div>
 
               {/* Experience badge */}
-              <span className="inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-[6px] bg-[#E5484D]/15 text-[#E5484D] uppercase tracking-wider border border-[#E5484D]/30">
+              <span className="inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-[6px] bg-[#FF304F]/15 text-[#FF304F] uppercase tracking-wider border border-[#FF304F]/30">
                 {targetProfile.experience_level || 'beginner'} creator
               </span>
             </div>
@@ -289,7 +304,7 @@ export const ProfilePage: React.FC = () => {
                     onClick={() => navigate('/settings')}
                     aria-label="Settings"
                   >
-                    <Settings className="w-4 h-4 text-[#858995]" />
+                    <Settings className="w-4 h-4 text-muted" />
                   </Button>
                 </>
               ) : (
@@ -298,8 +313,8 @@ export const ProfilePage: React.FC = () => {
                     onClick={toggleFollow}
                     className={`flex items-center gap-1.5 px-4 py-2 rounded-[10px] text-xs font-semibold transition-all shadow-xs ${
                       isFollowing
-                        ? 'bg-[#1B1D24] text-[#B0B3BD] hover:bg-[#282A32] border border-[#292B34]'
-                        : 'bg-[#E5484D] hover:bg-[#D7373F] text-white'
+                        ? 'bg-surface-secondary text-secondary hover:bg-surface-tertiary border border-theme'
+                        : 'bg-[#FF304F] hover:bg-[#E5203F] text-white'
                     }`}
                   >
                     {isFollowing ? (
@@ -331,35 +346,35 @@ export const ProfilePage: React.FC = () => {
           {/* Stats Counters */}
           <div className="flex items-center gap-6 py-1 text-xs">
             <div className="flex items-center gap-1.5">
-              <span className="font-bold text-[#F5F5F7] text-sm">{posts.length}</span>
-              <span className="text-[#858995]">posts</span>
+              <span className="font-bold text-primary text-sm">{posts.length}</span>
+              <span className="text-muted">posts</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="font-bold text-[#F5F5F7] text-sm">
+              <span className="font-bold text-primary text-sm">
                 {formatNumber(targetProfile.followers_count)}
               </span>
-              <span className="text-[#858995]">followers</span>
+              <span className="text-muted">followers</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="font-bold text-[#F5F5F7] text-sm">
+              <span className="font-bold text-primary text-sm">
                 {formatNumber(targetProfile.following_count)}
               </span>
-              <span className="text-[#858995]">following</span>
+              <span className="text-muted">following</span>
             </div>
           </div>
 
           {/* Bio */}
           {targetProfile.bio && (
-            <p className="text-xs text-[#B0B3BD] leading-relaxed text-center sm:text-left whitespace-pre-line">
+            <p className="text-xs text-secondary leading-relaxed text-center sm:text-left whitespace-pre-line">
               {targetProfile.bio}
             </p>
           )}
 
           {/* Meta details (institution, location, website) */}
-          <div className="flex flex-wrap items-center gap-3 text-xs text-[#858995] pt-1">
+          <div className="flex flex-wrap items-center gap-3 text-xs text-muted pt-1">
             {targetProfile.institution && (
               <span className="flex items-center gap-1">
-                <Building className="w-3.5 h-3.5 text-[#E5484D]" />
+                <Building className="w-3.5 h-3.5 text-[#FF304F]" />
                 <span>
                   {targetProfile.institution}
                   {targetProfile.course ? ` • ${targetProfile.course}` : ''}
@@ -368,7 +383,7 @@ export const ProfilePage: React.FC = () => {
             )}
             {targetProfile.location && (
               <span className="flex items-center gap-1">
-                <MapPin className="w-3.5 h-3.5 text-[#E5484D]" />
+                <MapPin className="w-3.5 h-3.5 text-[#FF304F]" />
                 <span>{targetProfile.location}</span>
               </span>
             )}
@@ -377,7 +392,7 @@ export const ProfilePage: React.FC = () => {
                 href={targetProfile.website_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1 text-[#E5484D] hover:underline"
+                className="flex items-center gap-1 text-[#FF304F] hover:underline"
               >
                 <Globe className="w-3.5 h-3.5" />
                 <span>Portfolio</span>
@@ -388,13 +403,13 @@ export const ProfilePage: React.FC = () => {
       </div>
 
       {/* Skills Offered & Learning Section */}
-      <div className="w-full bg-[#15161B] border border-[#292B34] rounded-[16px] p-4 flex flex-col gap-3">
-        <div className="flex items-center justify-between border-b border-[#292B34]/60 pb-2">
-          <span className="text-xs font-bold text-[#858995] uppercase tracking-wider flex items-center gap-1.5">
-            <GraduationCap className="w-4 h-4 text-[#E5484D]" />
+      <div className="w-full bg-surface border border-theme rounded-[16px] p-4 flex flex-col gap-3">
+        <div className="flex items-center justify-between border-b border-theme pb-2">
+          <span className="text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-1.5">
+            <GraduationCap className="w-4 h-4 text-[#FF304F]" />
             <span>Skill Portfolio</span>
           </span>
-          <span className="text-[11px] text-[#858995]">Peer Learning Ready</span>
+          <span className="text-[11px] text-muted">Peer Learning Ready</span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -415,7 +430,7 @@ export const ProfilePage: React.FC = () => {
                   </span>
                 ))
               ) : (
-                <span className="text-xs text-[#858995]">
+                <span className="text-xs text-muted">
                   UI/UX Design, Flutter & Mobile Development
                 </span>
               )}
@@ -439,7 +454,7 @@ export const ProfilePage: React.FC = () => {
                   </span>
                 ))
               ) : (
-                <span className="text-xs text-[#858995]">
+                <span className="text-xs text-muted">
                   AI Engineering, Python, Video Editing
                 </span>
               )}
@@ -449,30 +464,30 @@ export const ProfilePage: React.FC = () => {
       </div>
 
       {/* Profile Content Tabs */}
-      <div className="flex items-center justify-center gap-8 border-b border-[#292B34] text-xs font-semibold select-none">
+      <div className="flex items-center justify-center gap-8 border-b border-theme text-xs font-semibold select-none">
         <button
           onClick={() => setActiveTab('posts')}
           className={`flex items-center gap-1.5 py-3 transition-colors relative ${
-            activeTab === 'posts' ? 'text-white' : 'text-[#858995] hover:text-[#B0B3BD]'
+            activeTab === 'posts' ? 'text-primary' : 'text-secondary hover:text-primary'
           }`}
         >
           <Grid className="w-4 h-4" />
           <span>Posts</span>
           {activeTab === 'posts' && (
-            <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#E5484D] rounded-full" />
+            <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#FF304F] rounded-full" />
           )}
         </button>
 
         <button
           onClick={() => setActiveTab('reels')}
           className={`flex items-center gap-1.5 py-3 transition-colors relative ${
-            activeTab === 'reels' ? 'text-white' : 'text-[#858995] hover:text-[#B0B3BD]'
+            activeTab === 'reels' ? 'text-primary' : 'text-secondary hover:text-primary'
           }`}
         >
           <Film className="w-4 h-4" />
           <span>Reels</span>
           {activeTab === 'reels' && (
-            <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#E5484D] rounded-full" />
+            <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#FF304F] rounded-full" />
           )}
         </button>
 
@@ -480,13 +495,13 @@ export const ProfilePage: React.FC = () => {
           <button
             onClick={() => setActiveTab('saved')}
             className={`flex items-center gap-1.5 py-3 transition-colors relative ${
-              activeTab === 'saved' ? 'text-white' : 'text-[#858995] hover:text-[#B0B3BD]'
+              activeTab === 'saved' ? 'text-primary' : 'text-secondary hover:text-primary'
             }`}
           >
             <Bookmark className="w-4 h-4" />
             <span>Saved</span>
             {activeTab === 'saved' && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#E5484D] rounded-full" />
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#FF304F] rounded-full" />
             )}
           </button>
         )}
@@ -496,7 +511,7 @@ export const ProfilePage: React.FC = () => {
       <div>
         {activeTab === 'posts' && (
           posts.length === 0 ? (
-            <div className="py-12 text-center text-xs text-[#858995]">
+            <div className="py-12 text-center text-xs text-muted">
               No posts published yet.
             </div>
           ) : (
@@ -504,21 +519,30 @@ export const ProfilePage: React.FC = () => {
               {posts.map((post) => (
                 <div
                   key={post.id}
-                  className="aspect-square bg-[#15161B] rounded-[14px] overflow-hidden border border-[#292B34] relative group cursor-pointer"
+                  className="aspect-square bg-surface rounded-[14px] overflow-hidden border border-theme relative group cursor-pointer"
                   onClick={() => setSelectedPostForComments(post)}
                 >
                   {post.image_url || post.video_url ? (
-                    <img
-                      src={post.image_url || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80'}
-                      alt={post.caption}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
+                    post.video_url ? (
+                      <video
+                        src={post.video_url}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        muted
+                        playsInline
+                      />
+                    ) : (
+                      <img
+                        src={post.image_url!}
+                        alt={post.caption}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    )
                   ) : (
-                    <div className="w-full h-full p-4 flex flex-col justify-between bg-[#1B1D24]">
-                      <span className="text-xs text-[#F5F5F7] line-clamp-4 leading-relaxed">
+                    <div className="w-full h-full p-4 flex flex-col justify-between bg-surface-secondary">
+                      <span className="text-xs text-primary line-clamp-4 leading-relaxed">
                         {post.caption}
                       </span>
-                      <span className="text-[10px] text-[#E5484D] font-bold">
+                      <span className="text-[10px] text-[#FF304F] font-bold">
                         {post.skill_tags?.[0] || '#Skill'}
                       </span>
                     </div>
@@ -531,7 +555,7 @@ export const ProfilePage: React.FC = () => {
 
         {activeTab === 'reels' && (
           posts.filter((p) => isReelPost(p)).length === 0 ? (
-            <div className="py-12 text-center text-xs text-[#858995]">
+            <div className="py-12 text-center text-xs text-muted">
               No reels published yet.
             </div>
           ) : (
@@ -542,7 +566,7 @@ export const ProfilePage: React.FC = () => {
                   <div
                     key={post.id}
                     onClick={() => navigate('/reels')}
-                    className="aspect-[9/16] bg-black rounded-[14px] overflow-hidden border border-[#292B34] relative cursor-pointer"
+                    className="aspect-[9/16] bg-black rounded-[14px] overflow-hidden border border-theme relative cursor-pointer"
                   >
                     <video
                       src={post.video_url || post.image_url || ''}
@@ -556,7 +580,7 @@ export const ProfilePage: React.FC = () => {
 
         {activeTab === 'saved' && (
           savedPosts.length === 0 ? (
-            <div className="py-12 text-center text-xs text-[#858995]">
+            <div className="py-12 text-center text-xs text-muted">
               No saved posts yet. Bookmark tutorials from the feed to view them here.
             </div>
           ) : (
@@ -565,13 +589,33 @@ export const ProfilePage: React.FC = () => {
                 <div
                   key={post.id}
                   onClick={() => setSelectedPostForComments(post)}
-                  className="aspect-square bg-[#15161B] rounded-[14px] overflow-hidden border border-[#292B34] cursor-pointer"
+                  className="aspect-square bg-surface rounded-[14px] overflow-hidden border border-theme cursor-pointer"
                 >
-                  <img
-                    src={post.image_url || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80'}
-                    alt={post.caption}
-                    className="w-full h-full object-cover"
-                  />
+                  {post.image_url || post.video_url ? (
+                    post.video_url ? (
+                      <video
+                        src={post.video_url}
+                        className="w-full h-full object-cover"
+                        muted
+                        playsInline
+                      />
+                    ) : (
+                      <img
+                        src={post.image_url!}
+                        alt={post.caption}
+                        className="w-full h-full object-cover"
+                      />
+                    )
+                  ) : (
+                    <div className="w-full h-full p-4 flex flex-col justify-between bg-surface-secondary">
+                      <span className="text-xs text-primary line-clamp-4 leading-relaxed">
+                        {post.caption}
+                      </span>
+                      <span className="text-[10px] text-[#FF304F] font-bold">
+                        {post.skill_tags?.[0] || '#Skill'}
+                      </span>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
