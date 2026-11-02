@@ -66,7 +66,12 @@ export const PostComposer: React.FC<PostComposerProps> = ({
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !user) return;
+    if (!file) return;
+
+    if (!user) {
+      setError('Your session has expired. Please sign in again.');
+      return;
+    }
 
     setError(null);
     const isVideo =
@@ -75,7 +80,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
 
     if (isVideo) {
       if (file.size > MAX_VIDEO_SIZE) {
-        setError('Video file is too large. Maximum permitted size is 100MB.');
+        setError('Your selected file exceeds the upload size limit (100MB for video).');
         return;
       }
       if (
@@ -83,12 +88,12 @@ export const PostComposer: React.FC<PostComposerProps> = ({
         !ALLOWED_VIDEO_TYPES.includes(file.type) &&
         !file.name.match(/\.(mp4|webm|mov|ogg|mkv)$/i)
       ) {
-        setError('Unsupported video format. Please upload MP4, WebM, or MOV video.');
+        setError('Unsupported file format. Please select a supported video (MP4, WebM, or MOV).');
         return;
       }
     } else {
       if (file.size > MAX_IMAGE_SIZE) {
-        setError('Image file is too large. Maximum permitted size is 15MB.');
+        setError('Your selected file exceeds the upload size limit (15MB for images).');
         return;
       }
       if (
@@ -96,7 +101,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
         !ALLOWED_IMAGE_TYPES.includes(file.type) &&
         !file.name.match(/\.(jpg|jpeg|png|webp|gif)$/i)
       ) {
-        setError('Unsupported image format. Please upload JPG, PNG, or WebP.');
+        setError('Unsupported file format. Please select a supported image (JPG, PNG, or WebP).');
         return;
       }
     }
@@ -106,30 +111,64 @@ export const PostComposer: React.FC<PostComposerProps> = ({
     try {
       const fileExt =
         file.name.split('.').pop()?.toLowerCase() || (isVideo ? 'mp4' : 'jpg');
-      const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+      const uniqueSuffix = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      const fileName = `${user.id}/${uniqueSuffix}.${fileExt}`;
 
       const primaryBucket = isVideo ? 'reels_videos' : 'post_images';
+      let bucketUsed = primaryBucket;
       let uploadResult = await supabase.storage
         .from(primaryBucket)
-        .upload(fileName, file, { upsert: true });
+        .upload(fileName, file, {
+          contentType: file.type || (isVideo ? 'video/mp4' : 'image/jpeg'),
+          upsert: true,
+        });
 
-      // If reels_videos fails (e.g. permissions or bucket missing), fallback to post_images
+      // If primary bucket fails (e.g. reels_videos bucket not found), fallback to post_images
       if (uploadResult.error && isVideo) {
+        bucketUsed = 'post_images';
         uploadResult = await supabase.storage
           .from('post_images')
-          .upload(fileName, file, { upsert: true });
+          .upload(fileName, file, {
+            contentType: file.type || 'video/mp4',
+            upsert: true,
+          });
       }
 
       if (uploadResult.error) {
-        setError(
-          `Upload failed: ${uploadResult.error.message || 'Storage error'}. Please try again or provide a direct video URL.`
-        );
+        console.error('Storage upload error details:', uploadResult.error);
+        const msg = uploadResult.error.message || '';
+        if (
+          msg.includes('schema is invalid') ||
+          msg.includes('recursion') ||
+          uploadResult.error.statusCode === '503'
+        ) {
+          setError(
+            'Database storage schema requires update. Run migration 014 in Supabase SQL Editor, or provide a direct media URL.'
+          );
+        } else if (
+          msg.includes('row-level security') ||
+          uploadResult.error.statusCode === '403'
+        ) {
+          setError('You do not have permission to upload this content. Please sign in again.');
+        } else if (
+          msg.includes('mime type') ||
+          uploadResult.error.statusCode === '415'
+        ) {
+          setError('Unsupported file format. Please select a supported image or video.');
+        } else if (
+          msg.includes('Bucket not found') ||
+          uploadResult.error.statusCode === '404'
+        ) {
+          setError(
+            'Storage bucket is not configured yet. Run migration 014 in Supabase SQL Editor, or paste a direct media URL.'
+          );
+        } else {
+          setError('Unable to upload your media. Please try again.');
+        }
         setIsUploading(false);
         return;
       }
 
-      const bucketUsed =
-        isVideo && !uploadResult.error ? primaryBucket : 'post_images';
       const { data: urlData } = supabase.storage
         .from(bucketUsed)
         .getPublicUrl(uploadResult.data.path);
@@ -142,7 +181,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
       }
     } catch (err: any) {
       console.error('File upload error:', err);
-      setError(err.message || 'Could not upload media. Please try again.');
+      setError(err.message || 'Unable to upload your media. Please try again.');
     } finally {
       setIsUploading(false);
     }
@@ -161,7 +200,10 @@ export const PostComposer: React.FC<PostComposerProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    if (!user) {
+      setError('Your session has expired. Please sign in again.');
+      return;
+    }
     if (!caption.trim()) {
       setError('Please add a caption to your post.');
       return;
@@ -194,7 +236,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
         comments_count: 0,
       };
 
-      // Attempt 1: Full Migration 012 schema
+      // Attempt 1: Full Migration 012/014 schema
       let insertResult = await supabase.from('posts').insert({
         ...basePost,
         image_url: mediaUrl.trim() || (isReel ? video : null),
@@ -230,6 +272,7 @@ export const PostComposer: React.FC<PostComposerProps> = ({
       }
 
       if (insertResult.error) {
+        console.error('Post insert error:', insertResult.error);
         throw insertResult.error;
       }
 
@@ -243,8 +286,8 @@ export const PostComposer: React.FC<PostComposerProps> = ({
       window.dispatchEvent(new CustomEvent('upmind:refreshFeed'));
       onClose();
     } catch (err: any) {
-      console.error(err);
-      setError(err.message || 'Failed to publish post. Please try again.');
+      console.error('Post submit error:', err);
+      setError(err.message || 'Your post could not be saved. Please try again.');
     } finally {
       setIsSubmitting(false);
     }

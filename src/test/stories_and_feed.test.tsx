@@ -4,6 +4,8 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { StoriesBar } from '../components/feed/StoriesBar';
 import { StoryViewerModal } from '../components/feed/StoryViewerModal';
+import { StoryComposerModal } from '../components/feed/StoryComposerModal';
+import { PostComposer } from '../components/feed/PostComposer';
 import { HomePage } from '../pages/HomePage';
 import * as authContext from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
@@ -324,6 +326,149 @@ describe('Stories & Feed — Real User Content Only', () => {
       expect(dispatchSpy).toHaveBeenCalledWith(
         expect.objectContaining({ type: 'upmind:openCreatePost' })
       );
+    });
+  });
+
+  describe('StoryComposerModal Validation & Uploads', () => {
+    it('validates and rejects unsupported file formats', () => {
+      render(
+        <StoryComposerModal isOpen={true} onClose={vi.fn()} />
+      );
+
+      const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+      expect(fileInput).toBeInTheDocument();
+
+      const invalidFile = new File(['dummy'], 'document.pdf', { type: 'application/pdf' });
+      fireEvent.change(fileInput, { target: { files: [invalidFile] } });
+
+      expect(
+        screen.getByText(/unsupported file format/i)
+      ).toBeInTheDocument();
+    });
+
+    it('validates and rejects oversized files', () => {
+      render(
+        <StoryComposerModal isOpen={true} onClose={vi.fn()} />
+      );
+
+      const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+
+      // Mock oversized image > 15MB
+      const bigFile = new File(['x'.repeat(100)], 'huge.png', { type: 'image/png' });
+      Object.defineProperty(bigFile, 'size', { value: 20 * 1024 * 1024 });
+
+      fireEvent.change(fileInput, { target: { files: [bigFile] } });
+
+      expect(
+        screen.getByText(/exceeds the upload size limit/i)
+      ).toBeInTheDocument();
+    });
+
+    it('shows clear actionable message when stories table is missing without crashing', async () => {
+      // Mock storage upload success
+      (supabase.storage.from as any).mockReturnValue({
+        upload: vi.fn().mockResolvedValue({ data: { path: 'user/123.png' }, error: null }),
+        getPublicUrl: vi.fn().mockReturnValue({ data: { publicUrl: 'https://example.com/story.png' } }),
+      });
+
+      // Mock DB missing table error PGRST205
+      (supabase.from as any).mockImplementation((table: string) => {
+        if (table === 'stories') {
+          return {
+            insert: vi.fn().mockResolvedValue({
+              error: {
+                code: 'PGRST205',
+                message: "Could not find the table 'public.stories' in the schema cache",
+              },
+            }),
+          };
+        }
+        return {};
+      });
+
+      const onCloseMock = vi.fn();
+
+      render(
+        <StoryComposerModal isOpen={true} onClose={onCloseMock} />
+      );
+
+      const urlInput = screen.getByPlaceholderText(/or paste image\/video url/i);
+      fireEvent.change(urlInput, { target: { value: 'https://example.com/story.png' } });
+
+      const submitBtn = screen.getByRole('button', { name: /share to story/i });
+      fireEvent.click(submitBtn);
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(/stories table does not exist in the database.*migration 014/i)
+        ).toBeInTheDocument();
+      });
+
+      // Modal should NOT close on error so user does not lose input
+      expect(onCloseMock).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('PostComposer Validation & Uploads', () => {
+    it('validates caption before publishing', async () => {
+      render(
+        <PostComposer isOpen={true} onClose={vi.fn()} />
+      );
+
+      const form = document.querySelector('form')!;
+      fireEvent.submit(form);
+
+      await waitFor(() => {
+        expect(screen.getByText(/please add a caption/i)).toBeInTheDocument();
+      });
+    });
+
+    it('recovers gracefully via schema fallback when video_url column is missing', async () => {
+      let callCount = 0;
+      const mockInsert = vi.fn().mockImplementation((postData: any) => {
+        callCount++;
+        if (callCount === 1) {
+          // Attempt 1 fails: column video_url does not exist
+          return Promise.resolve({
+            error: { code: '42703', message: 'column posts.video_url does not exist' },
+          });
+        }
+        // Attempt 2 succeeds
+        return Promise.resolve({ data: [postData], error: null });
+      });
+
+      (supabase.from as any).mockImplementation((table: string) => {
+        if (table === 'posts') {
+          return {
+            insert: mockInsert,
+          };
+        }
+        return {};
+      });
+
+      const onPostCreatedMock = vi.fn();
+      const onCloseMock = vi.fn();
+
+      render(
+        <PostComposer
+          isOpen={true}
+          onClose={onCloseMock}
+          onPostCreated={onPostCreatedMock}
+          defaultPostType="image"
+        />
+      );
+
+      const captionArea = screen.getByPlaceholderText(/what skill are you sharing today/i);
+      fireEvent.change(captionArea, { target: { value: 'Mastering React State' } });
+
+      const submitBtn = screen.getByRole('button', { name: /publish post/i });
+      fireEvent.click(submitBtn);
+
+      await waitFor(() => {
+        expect(mockInsert).toHaveBeenCalledTimes(2);
+        expect(onPostCreatedMock).toHaveBeenCalled();
+        expect(onCloseMock).toHaveBeenCalled();
+      });
     });
   });
 });
