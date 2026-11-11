@@ -89,8 +89,28 @@ export const HomePage: React.FC = () => {
     fetchPosts();
 
     const handleFeedRefresh = () => fetchPosts(true);
+    const handlePostDeleted = (e: any) => {
+      const postId = e.detail?.postId;
+      if (postId) {
+        setPosts((prev) => prev.filter((p) => p.id !== postId));
+      }
+    };
+    const handlePostUpdated = (e: any) => {
+      const updated = e.detail?.post;
+      if (updated) {
+        setPosts((prev) => prev.map((p) => (p.id === updated.id ? { ...p, ...updated } : p)));
+      }
+    };
+
     window.addEventListener('upmind:refreshFeed', handleFeedRefresh);
-    return () => window.removeEventListener('upmind:refreshFeed', handleFeedRefresh);
+    window.addEventListener('upmind:postDeleted', handlePostDeleted);
+    window.addEventListener('upmind:postUpdated', handlePostUpdated);
+
+    return () => {
+      window.removeEventListener('upmind:refreshFeed', handleFeedRefresh);
+      window.removeEventListener('upmind:postDeleted', handlePostDeleted);
+      window.removeEventListener('upmind:postUpdated', handlePostUpdated);
+    };
   }, [fetchPosts]);
 
   return (
@@ -166,6 +186,10 @@ export const HomePage: React.FC = () => {
               onRequestMaterials={(p) => setSelectedPostForMaterials(p)}
               onOpenComments={(p) => setSelectedPostForComments(p)}
               onOpenShare={(p) => setSelectedPostForShare(p)}
+              onPostDeleted={(postId) => setPosts((prev) => prev.filter((p) => p.id !== postId))}
+              onPostUpdated={(updated) =>
+                setPosts((prev) => prev.map((p) => (p.id === updated.id ? { ...p, ...updated } : p)))
+              }
             />
           ))
         )}
@@ -184,6 +208,14 @@ export const HomePage: React.FC = () => {
         onClose={() => setSelectedPostForComments(null)}
         post={selectedPostForComments}
         onCommentAdded={() => fetchPosts(true)}
+        onPostDeleted={(postId) => {
+          setPosts((prev) => prev.filter((p) => p.id !== postId));
+          setSelectedPostForComments(null);
+        }}
+        onPostUpdated={(updated) => {
+          setPosts((prev) => prev.map((p) => (p.id === updated.id ? { ...p, ...updated } : p)));
+          setSelectedPostForComments(updated);
+        }}
       />
 
       {/* Share Modal */}

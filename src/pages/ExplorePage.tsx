@@ -89,6 +89,32 @@ export const ExplorePage: React.FC = () => {
     }
 
     loadExploreData();
+
+    const handlePostDeleted = (e: any) => {
+      const postId = e.detail?.postId;
+      if (postId) {
+        setPosts((prev) => prev.filter((p) => p.id !== postId));
+        setActivePost((prev) => (prev?.id === postId ? null : prev));
+      }
+    };
+    const handlePostUpdated = (e: any) => {
+      const updated = e.detail?.post;
+      if (updated) {
+        setPosts((prev) => prev.map((p) => (p.id === updated.id ? { ...p, ...updated } : p)));
+        setActivePost((prev) => (prev?.id === updated.id ? { ...prev, ...updated } : prev));
+      }
+    };
+    const handleRefresh = () => loadExploreData();
+
+    window.addEventListener('upmind:postDeleted', handlePostDeleted);
+    window.addEventListener('upmind:postUpdated', handlePostUpdated);
+    window.addEventListener('upmind:refreshFeed', handleRefresh);
+
+    return () => {
+      window.removeEventListener('upmind:postDeleted', handlePostDeleted);
+      window.removeEventListener('upmind:postUpdated', handlePostUpdated);
+      window.removeEventListener('upmind:refreshFeed', handleRefresh);
+    };
   }, [user]);
 
   const toggleFollow = async (creatorId: string) => {
@@ -329,6 +355,14 @@ export const ExplorePage: React.FC = () => {
               onRequestMaterials={(p) => setSelectedPostForMaterials(p)}
               onOpenComments={(p) => setSelectedPostForComments(p)}
               onOpenShare={(p) => setSelectedPostForShare(p)}
+              onPostDeleted={(postId) => {
+                setPosts((prev) => prev.filter((p) => p.id !== postId));
+                setActivePost(null);
+              }}
+              onPostUpdated={(updated) => {
+                setPosts((prev) => prev.map((p) => (p.id === updated.id ? { ...p, ...updated } : p)));
+                setActivePost(updated);
+              }}
             />
           </div>
         </div>
@@ -346,6 +380,16 @@ export const ExplorePage: React.FC = () => {
         isOpen={!!selectedPostForComments}
         onClose={() => setSelectedPostForComments(null)}
         post={selectedPostForComments}
+        onPostDeleted={(postId) => {
+          setPosts((prev) => prev.filter((p) => p.id !== postId));
+          setActivePost(null);
+          setSelectedPostForComments(null);
+        }}
+        onPostUpdated={(updated) => {
+          setPosts((prev) => prev.map((p) => (p.id === updated.id ? { ...p, ...updated } : p)));
+          setActivePost(updated);
+          setSelectedPostForComments(updated);
+        }}
       />
 
       {/* Share Modal */}

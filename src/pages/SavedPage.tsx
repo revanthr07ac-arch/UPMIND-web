@@ -44,6 +44,27 @@ export const SavedPage: React.FC = () => {
 
   useEffect(() => {
     loadSavedPosts();
+
+    const handlePostDeleted = (e: any) => {
+      const postId = e.detail?.postId;
+      if (postId) {
+        setSavedPosts((prev) => prev.filter((p) => p.id !== postId));
+      }
+    };
+    const handlePostUpdated = (e: any) => {
+      const updated = e.detail?.post;
+      if (updated) {
+        setSavedPosts((prev) => prev.map((p) => (p.id === updated.id ? { ...p, ...updated } : p)));
+      }
+    };
+
+    window.addEventListener('upmind:postDeleted', handlePostDeleted);
+    window.addEventListener('upmind:postUpdated', handlePostUpdated);
+
+    return () => {
+      window.removeEventListener('upmind:postDeleted', handlePostDeleted);
+      window.removeEventListener('upmind:postUpdated', handlePostUpdated);
+    };
   }, [user]);
 
   return (

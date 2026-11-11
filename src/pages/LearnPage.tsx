@@ -20,6 +20,7 @@ import { EmptyState } from '../components/common/EmptyState';
 import { formatTimeAgo, triggerLearningCelebration } from '../lib/utils';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
+import { getOrCreateDirectConversation } from '../lib/conversations';
 import type { LearningRequest } from '../types/database';
 
 export const LearnPage: React.FC = () => {
@@ -171,42 +172,15 @@ export const LearnPage: React.FC = () => {
   const startChatWith = async (targetUserId: string) => {
     if (!user) return;
     try {
-      // Find or create conversation with this user
-      const { data: existingConvs } = await supabase
-        .from('conversation_members')
-        .select('conversation_id')
-        .eq('user_id', user.id);
-
-      const convIds = existingConvs?.map((c) => c.conversation_id) || [];
-      if (convIds.length > 0) {
-        const { data: match } = await supabase
-          .from('conversation_members')
-          .select('conversation_id')
-          .eq('user_id', targetUserId)
-          .in('conversation_id', convIds)
-          .maybeSingle();
-
-        if (match) {
-          navigate(`/messages?conv=${match.conversation_id}`);
-          return;
-        }
+      const { conversationId, error } = await getOrCreateDirectConversation(user.id, targetUserId);
+      if (conversationId) {
+        navigate(`/messages?conv=${conversationId}`);
+      } else {
+        console.error('Failed to open conversation:', error);
+        navigate('/messages');
       }
-
-      // Create new conversation
-      const { data: newConv } = await supabase
-        .from('conversations')
-        .insert({ created_by: user.id })
-        .select()
-        .single();
-
-      if (newConv) {
-        await supabase.from('conversation_members').insert([
-          { conversation_id: newConv.id, user_id: user.id },
-          { conversation_id: newConv.id, user_id: targetUserId },
-        ]);
-        navigate(`/messages?conv=${newConv.id}`);
-      }
-    } catch (_) {
+    } catch (err) {
+      console.error('startChatWith error:', err);
       navigate('/messages');
     }
   };

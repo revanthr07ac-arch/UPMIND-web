@@ -13,16 +13,21 @@ import {
   UserPlus,
   Check,
   Sparkles,
+  Edit3,
+  Trash2,
 } from 'lucide-react';
 import { Avatar } from '../components/common/Avatar';
 import { Button } from '../components/common/Button';
 import { EditProfileModal } from '../components/profile/EditProfileModal';
 import { LearningRequestModal } from '../components/learning/LearningRequestModal';
 import { PostCommentsModal } from '../components/feed/PostCommentsModal';
+import { EditPostModal } from '../components/feed/EditPostModal';
+import { DeletePostModal } from '../components/feed/DeletePostModal';
 import { ShareModal } from '../components/feed/ShareModal';
 import { formatNumber, isReelPost } from '../lib/utils';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
+import { getOrCreateDirectConversation } from '../lib/conversations';
 import type { Profile, Post, UserSkill } from '../types/database';
 
 export const ProfilePage: React.FC = () => {
@@ -44,6 +49,8 @@ export const ProfilePage: React.FC = () => {
   const [selectedPostForMaterials, setSelectedPostForMaterials] = useState<Post | null>(null);
   const [selectedPostForComments, setSelectedPostForComments] = useState<Post | null>(null);
   const [selectedPostForShare, setSelectedPostForShare] = useState<Post | null>(null);
+  const [postToEdit, setPostToEdit] = useState<Post | null>(null);
+  const [postToDelete, setPostToDelete] = useState<Post | null>(null);
 
   const isSelf = myProfile?.username === username || (!username && !!myProfile);
 
@@ -144,6 +151,32 @@ export const ProfilePage: React.FC = () => {
 
   useEffect(() => {
     loadProfileData();
+
+    const handlePostDeleted = (e: any) => {
+      const postId = e.detail?.postId;
+      if (postId) {
+        setPosts((prev) => prev.filter((p) => p.id !== postId));
+        setSavedPosts((prev) => prev.filter((p) => p.id !== postId));
+      }
+    };
+    const handlePostUpdated = (e: any) => {
+      const updated = e.detail?.post;
+      if (updated) {
+        setPosts((prev) => prev.map((p) => (p.id === updated.id ? { ...p, ...updated } : p)));
+        setSavedPosts((prev) => prev.map((p) => (p.id === updated.id ? { ...p, ...updated } : p)));
+      }
+    };
+    const handleRefresh = () => loadProfileData();
+
+    window.addEventListener('upmind:postDeleted', handlePostDeleted);
+    window.addEventListener('upmind:postUpdated', handlePostUpdated);
+    window.addEventListener('upmind:refreshFeed', handleRefresh);
+
+    return () => {
+      window.removeEventListener('upmind:postDeleted', handlePostDeleted);
+      window.removeEventListener('upmind:postUpdated', handlePostUpdated);
+      window.removeEventListener('upmind:refreshFeed', handleRefresh);
+    };
   }, [loadProfileData]);
 
   const toggleFollow = async () => {
@@ -191,46 +224,28 @@ export const ProfilePage: React.FC = () => {
   };
 
   const startDirectMessage = async () => {
-    if (!user || !targetProfile) {
+    if (!user) {
       navigate('/login');
+      return;
+    }
+    if (!targetProfile || user.id === targetProfile.id) {
       return;
     }
 
     try {
-      const { data: memberRows } = await supabase
-        .from('conversation_members')
-        .select('conversation_id')
-        .eq('user_id', user.id);
+      const { conversationId, error } = await getOrCreateDirectConversation(
+        user.id,
+        targetProfile.id
+      );
 
-      const convIds = memberRows?.map((m) => m.conversation_id) || [];
-      if (convIds.length > 0) {
-        const { data: match } = await supabase
-          .from('conversation_members')
-          .select('conversation_id')
-          .eq('user_id', targetProfile.id)
-          .in('conversation_id', convIds)
-          .maybeSingle();
-
-        if (match) {
-          navigate(`/messages?conv=${match.conversation_id}`);
-          return;
-        }
+      if (conversationId) {
+        navigate(`/messages?conv=${conversationId}`);
+      } else {
+        console.error('Failed to open conversation:', error);
+        navigate('/messages');
       }
-
-      const { data: newConv } = await supabase
-        .from('conversations')
-        .insert({ created_by: user.id })
-        .select()
-        .single();
-
-      if (newConv) {
-        await supabase.from('conversation_members').insert([
-          { conversation_id: newConv.id, user_id: user.id },
-          { conversation_id: newConv.id, user_id: targetProfile.id },
-        ]);
-        navigate(`/messages?conv=${newConv.id}`);
-      }
-    } catch (_) {
+    } catch (err) {
+      console.error('startDirectMessage exception:', err);
       navigate('/messages');
     }
   };
@@ -522,6 +537,28 @@ export const ProfilePage: React.FC = () => {
                   className="aspect-square bg-surface rounded-[14px] overflow-hidden border border-theme relative group cursor-pointer"
                   onClick={() => setSelectedPostForComments(post)}
                 >
+                  {isSelf && (
+                    <div
+                      className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10 flex items-center gap-1.5"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <button
+                        onClick={() => setPostToEdit(post)}
+                        className="p-1.5 rounded-[8px] bg-black/75 hover:bg-black text-white shadow-sm transition-colors cursor-pointer"
+                        title="Edit Post"
+                      >
+                        <Edit3 className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => setPostToDelete(post)}
+                        className="p-1.5 rounded-[8px] bg-black/75 hover:bg-[#FF6269] text-white shadow-sm transition-colors cursor-pointer"
+                        title="Delete Post"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  )}
+
                   {post.image_url || post.video_url ? (
                     post.video_url ? (
                       <video
@@ -565,9 +602,30 @@ export const ProfilePage: React.FC = () => {
                 .map((post) => (
                   <div
                     key={post.id}
-                    onClick={() => navigate('/reels')}
-                    className="aspect-[9/16] bg-black rounded-[14px] overflow-hidden border border-theme relative cursor-pointer"
+                    onClick={() => setSelectedPostForComments(post)}
+                    className="aspect-[9/16] bg-black rounded-[14px] overflow-hidden border border-theme relative group cursor-pointer"
                   >
+                    {isSelf && (
+                      <div
+                        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity z-10 flex items-center gap-1.5"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <button
+                          onClick={() => setPostToEdit(post)}
+                          className="p-1.5 rounded-[8px] bg-black/75 hover:bg-black text-white shadow-sm transition-colors cursor-pointer"
+                          title="Edit Reel"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => setPostToDelete(post)}
+                          className="p-1.5 rounded-[8px] bg-black/75 hover:bg-[#FF6269] text-white shadow-sm transition-colors cursor-pointer"
+                          title="Delete Reel"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    )}
                     <video
                       src={post.video_url || post.image_url || ''}
                       className="w-full h-full object-cover"
@@ -648,7 +706,43 @@ export const ProfilePage: React.FC = () => {
         isOpen={!!selectedPostForComments}
         onClose={() => setSelectedPostForComments(null)}
         post={selectedPostForComments}
+        onPostDeleted={(postId) => {
+          setPosts((prev) => prev.filter((p) => p.id !== postId));
+          setSavedPosts((prev) => prev.filter((p) => p.id !== postId));
+          setSelectedPostForComments(null);
+        }}
+        onPostUpdated={(updated) => {
+          setPosts((prev) => prev.map((p) => (p.id === updated.id ? { ...p, ...updated } : p)));
+          setSavedPosts((prev) => prev.map((p) => (p.id === updated.id ? { ...p, ...updated } : p)));
+          setSelectedPostForComments(updated);
+        }}
       />
+
+      {/* Edit Post Modal */}
+      {postToEdit && (
+        <EditPostModal
+          isOpen={!!postToEdit}
+          onClose={() => setPostToEdit(null)}
+          post={postToEdit}
+          onPostUpdated={(updated) => {
+            setPosts((prev) => prev.map((p) => (p.id === updated.id ? { ...p, ...updated } : p)));
+            setPostToEdit(null);
+          }}
+        />
+      )}
+
+      {/* Delete Post Modal */}
+      {postToDelete && (
+        <DeletePostModal
+          isOpen={!!postToDelete}
+          onClose={() => setPostToDelete(null)}
+          post={postToDelete}
+          onPostDeleted={(id) => {
+            setPosts((prev) => prev.filter((p) => p.id !== id));
+            setPostToDelete(null);
+          }}
+        />
+      )}
 
       {/* Share Modal */}
       <ShareModal

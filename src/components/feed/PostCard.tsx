@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Heart,
@@ -10,11 +10,15 @@ import {
   BookOpen,
   ChevronDown,
   ChevronUp,
+  Edit3,
+  Trash2,
 } from 'lucide-react';
 import { Avatar } from '../common/Avatar';
 import { formatTimeAgo, formatNumber } from '../../lib/utils';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
+import { EditPostModal } from './EditPostModal';
+import { DeletePostModal } from './DeletePostModal';
 import type { Post } from '../../types/database';
 
 interface PostCardProps {
@@ -22,6 +26,8 @@ interface PostCardProps {
   onRequestMaterials: (post: Post) => void;
   onOpenComments: (post: Post) => void;
   onOpenShare: (post: Post) => void;
+  onPostDeleted?: (postId: string) => void;
+  onPostUpdated?: (updatedPost: Post) => void;
 }
 
 export const PostCard: React.FC<PostCardProps> = ({
@@ -29,19 +35,32 @@ export const PostCard: React.FC<PostCardProps> = ({
   onRequestMaterials,
   onOpenComments,
   onOpenShare,
+  onPostDeleted,
+  onPostUpdated,
 }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
+  const [currentPost, setCurrentPost] = useState<Post>(post);
   const [isLiked, setIsLiked] = useState<boolean>(!!post.is_liked);
   const [likesCount, setLikesCount] = useState<number>(post.likes_count || 0);
   const [isSaved, setIsSaved] = useState<boolean>(!!post.is_saved);
   const [showTutorialDetails, setShowTutorialDetails] = useState<boolean>(false);
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
   const [showOptions, setShowOptions] = useState<boolean>(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
 
-  const author = post.author;
-  const isSelf = user?.id === post.author_id;
+  useEffect(() => {
+    setCurrentPost(post);
+    setIsLiked(!!post.is_liked);
+    setLikesCount(post.likes_count || 0);
+    setIsSaved(!!post.is_saved);
+  }, [post]);
+
+  const author = currentPost.author;
+  // Strict ownership rule: compare authenticated user ID with post owner ID
+  const isSelf = !!user?.id && user.id === currentPost.author_id;
 
   const handleLike = async () => {
     if (!user) {
@@ -168,7 +187,7 @@ export const PostCard: React.FC<PostCardProps> = ({
                 </>
               )}
             </div>
-            <span className="text-[11px] text-muted">{formatTimeAgo(post.created_at)}</span>
+            <span className="text-[11px] text-muted">{formatTimeAgo(currentPost.created_at)}</span>
           </div>
         </div>
 
@@ -182,26 +201,62 @@ export const PostCard: React.FC<PostCardProps> = ({
           </button>
 
           {showOptions && (
-            <div className="absolute right-0 top-8 z-20 w-36 bg-surface border border-theme rounded-[12px] shadow-elevated py-1 animate-fade-in text-xs">
-              <button
-                onClick={() => {
-                  onOpenShare(post);
-                  setShowOptions(false);
-                }}
-                className="w-full text-left px-3 py-2 text-secondary hover:text-primary hover:bg-surface-secondary cursor-pointer"
-              >
-                Share Link
-              </button>
-              {!isSelf && (
-                <button
-                  onClick={() => {
-                    alert('Post reported for review.');
-                    setShowOptions(false);
-                  }}
-                  className="w-full text-left px-3 py-2 text-[#FF6269] hover:bg-[#FF6269]/10 cursor-pointer"
-                >
-                  Report Post
-                </button>
+            <div className="absolute right-0 top-8 z-20 w-40 bg-surface border border-theme rounded-[12px] shadow-elevated py-1 animate-fade-in text-xs overflow-hidden">
+              {isSelf ? (
+                <>
+                  <button
+                    onClick={() => {
+                      setIsEditModalOpen(true);
+                      setShowOptions(false);
+                    }}
+                    className="w-full text-left px-3.5 py-2 text-secondary hover:text-primary hover:bg-surface-secondary cursor-pointer flex items-center gap-2 transition-colors"
+                  >
+                    <Edit3 className="w-3.5 h-3.5 text-[#FF304F]" />
+                    <span>Edit Post</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsDeleteModalOpen(true);
+                      setShowOptions(false);
+                    }}
+                    className="w-full text-left px-3.5 py-2 text-[#FF6269] hover:bg-[#FF6269]/10 cursor-pointer flex items-center gap-2 transition-colors"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>Delete Post</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      onOpenShare(currentPost);
+                      setShowOptions(false);
+                    }}
+                    className="w-full text-left px-3.5 py-2 text-secondary hover:text-primary hover:bg-surface-secondary cursor-pointer flex items-center gap-2 transition-colors"
+                  >
+                    <Share2 className="w-3.5 h-3.5 text-muted" />
+                    <span>Share Link</span>
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => {
+                      onOpenShare(currentPost);
+                      setShowOptions(false);
+                    }}
+                    className="w-full text-left px-3.5 py-2 text-secondary hover:text-primary hover:bg-surface-secondary cursor-pointer flex items-center gap-2 transition-colors"
+                  >
+                    <Share2 className="w-3.5 h-3.5 text-muted" />
+                    <span>Share Link</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      alert('Post reported for review.');
+                      setShowOptions(false);
+                    }}
+                    className="w-full text-left px-3.5 py-2 text-[#FF6269] hover:bg-[#FF6269]/10 cursor-pointer flex items-center gap-2 transition-colors"
+                  >
+                    <span>Report Post</span>
+                  </button>
+                </>
               )}
             </div>
           )}
@@ -209,11 +264,11 @@ export const PostCard: React.FC<PostCardProps> = ({
       </header>
 
       {/* Media Preview */}
-      {(post.image_url || post.video_url) && (
+      {(currentPost.image_url || currentPost.video_url) && (
         <div className="relative w-full aspect-square sm:aspect-[4/3] bg-black overflow-hidden flex items-center justify-center">
-          {post.video_url || post.post_type === 'reel' ? (
+          {currentPost.video_url || currentPost.post_type === 'reel' ? (
             <video
-              src={post.video_url || post.image_url || ''}
+              src={currentPost.video_url || currentPost.image_url || ''}
               controls
               playsInline
               preload="metadata"
@@ -221,15 +276,15 @@ export const PostCard: React.FC<PostCardProps> = ({
             />
           ) : (
             <img
-              src={post.image_url!}
-              alt={post.caption}
+              src={currentPost.image_url!}
+              alt={currentPost.caption}
               loading="lazy"
               className="w-full h-full object-cover transition-transform duration-300 hover:scale-[1.01]"
             />
           )}
 
           {/* Tutorial badge overlay */}
-          {post.post_type === 'tutorial' && (
+          {currentPost.post_type === 'tutorial' && (
             <div className="absolute top-3 left-3 bg-black/75 backdrop-blur-md px-2.5 py-1 rounded-[8px] border border-white/10 flex items-center gap-1.5 text-xs font-semibold text-white">
               <BookOpen className="w-3.5 h-3.5 text-[#FF304F]" />
               <span>Tutorial Breakdown</span>
@@ -262,17 +317,17 @@ export const PostCard: React.FC<PostCardProps> = ({
 
             {/* Comment Button */}
             <button
-              onClick={() => onOpenComments(post)}
+              onClick={() => onOpenComments(currentPost)}
               aria-label="View comments"
               className="flex items-center gap-1.5 text-sm font-semibold text-secondary hover:text-primary transition-colors cursor-pointer"
             >
               <MessageCircle className="w-6 h-6" />
-              <span>{formatNumber(post.comments_count)}</span>
+              <span>{formatNumber(currentPost.comments_count)}</span>
             </button>
 
             {/* Share Button */}
             <button
-              onClick={() => onOpenShare(post)}
+              onClick={() => onOpenShare(currentPost)}
               aria-label="Share post"
               className="text-secondary hover:text-primary transition-colors cursor-pointer"
             >
@@ -284,7 +339,7 @@ export const PostCard: React.FC<PostCardProps> = ({
             {/* Request Learning Materials Button (Core differentiator) */}
             {!isSelf && (
               <button
-                onClick={() => onRequestMaterials(post)}
+                onClick={() => onRequestMaterials(currentPost)}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-[10px] bg-[#FF304F]/10 hover:bg-[#FF304F]/20 active:bg-[#FF304F]/30 text-[#FF304F] border border-[#FF304F]/30 text-xs font-semibold shadow-xs transition-all active:scale-[0.98] cursor-pointer"
               >
                 <GraduationCap className="w-4 h-4" />
@@ -315,13 +370,13 @@ export const PostCard: React.FC<PostCardProps> = ({
           >
             {author?.username}
           </span>
-          <span>{post.caption}</span>
+          <span>{currentPost.caption}</span>
         </div>
 
         {/* Skill Tags */}
-        {post.skill_tags && post.skill_tags.length > 0 && (
+        {currentPost.skill_tags && currentPost.skill_tags.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mb-2">
-            {post.skill_tags.map((tag) => (
+            {currentPost.skill_tags.map((tag) => (
               <span
                 key={tag}
                 onClick={() => navigate(`/explore?skill=${encodeURIComponent(tag.replace('#', ''))}`)}
@@ -334,7 +389,7 @@ export const PostCard: React.FC<PostCardProps> = ({
         )}
 
         {/* Tutorial Breakdown Collapsible */}
-        {post.educational_description && (
+        {currentPost.educational_description && (
           <div className="mt-2.5 pt-2.5 border-t border-theme">
             <button
               onClick={() => setShowTutorialDetails(!showTutorialDetails)}
@@ -353,22 +408,43 @@ export const PostCard: React.FC<PostCardProps> = ({
 
             {showTutorialDetails && (
               <div className="mt-2 p-3 rounded-[10px] bg-surface-secondary text-xs text-secondary whitespace-pre-wrap leading-relaxed animate-fade-in border border-theme">
-                {post.educational_description}
+                {currentPost.educational_description}
               </div>
             )}
           </div>
         )}
 
         {/* View all comments shortcut */}
-        {post.comments_count > 0 && (
+        {currentPost.comments_count > 0 && (
           <button
-            onClick={() => onOpenComments(post)}
+            onClick={() => onOpenComments(currentPost)}
             className="text-xs text-muted hover:text-secondary mt-2 block cursor-pointer"
           >
-            View all {post.comments_count} comments
+            View all {currentPost.comments_count} comments
           </button>
         )}
       </div>
+
+      {/* Edit Post Modal */}
+      <EditPostModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        post={currentPost}
+        onPostUpdated={(updated) => {
+          setCurrentPost(updated);
+          onPostUpdated?.(updated);
+        }}
+      />
+
+      {/* Delete Post Modal */}
+      <DeletePostModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        post={currentPost}
+        onPostDeleted={(id) => {
+          onPostDeleted?.(id);
+        }}
+      />
     </article>
   );
 };
